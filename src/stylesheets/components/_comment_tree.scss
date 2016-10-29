@@ -1,0 +1,17 @@
+.comment-tree {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    .comment-item {
+        margin-bottom: 10px;
+    }
+
+    .comment-tree {
+        padding-left: 40px;
+
+        .comment-item {
+            padding-left: 20px;
+        }
+    }
+}
