@@ -1,5 +1,4 @@
 import React from 'react';
-import CommentTree from './CommentTree';
 import AuthorAvatar from './AuthorAvatar';
 import AuthorName from './AuthorName';
 import CommentTimestamp from './CommentTimestamp';

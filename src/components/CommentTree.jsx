@@ -1,17 +1,10 @@
 import React from 'react';
-import CommentItem from './CommentItem';
+import CommentList from './CommentList';
 
 const CommentTree = ({comments}) => (
-  <ul className="comment-tree">
-    {comments.map(comment => (
-      <li key={comment.id}>
-        <CommentItem comment={comment} />
-        {comment.replies &&
-         <CommentTree comments={comment.replies} />
-        }
-      </li>
-     ))}
-  </ul>
+  <div className="comment-tree">
+    <CommentList comments={comments} />
+  </div>
 );
 
 export default CommentTree;
