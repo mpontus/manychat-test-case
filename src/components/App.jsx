@@ -4,8 +4,8 @@ import RootCommentForm from '../containers/RootCommentForm';
 
 const App = () => (
   <div className="app">
-    <RootCommentTree />
     <RootCommentForm maxTextLength={140} />
+    <RootCommentTree />
   </div>
 );
 
