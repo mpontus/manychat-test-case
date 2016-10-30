@@ -3,7 +3,7 @@ import {
   ADD_COMMENT,
 } from '../constants';
 
-const addComment = ({author, text}) => ({
+export const addComment = (author, text) => ({
   type: ADD_COMMENT,
   comment: {
     id: uuid(),

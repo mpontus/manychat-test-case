@@ -1,11 +1,11 @@
 import React from 'react';
 import RootCommentTree from '../containers/RootCommentTree';
-import CommentForm from './CommentForm';
+import RootCommentForm from '../containers/RootCommentForm';
 
 const App = () => (
   <div className="app">
     <RootCommentTree />
-    <CommentForm />
+    <RootCommentForm maxTextLength={140} />
   </div>
 );
 

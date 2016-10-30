@@ -9,6 +9,10 @@ import './stylesheets/main.scss';
 const timeNow = Date.now();
 
 const store = createStore(reducer, {
+  currentUser: {
+    username: "Michael Pontus",
+    avatarUrl: "https://robohash.org/mpon",
+  },
   comments: [
     {
       id: 1,
