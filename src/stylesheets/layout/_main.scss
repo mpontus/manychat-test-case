@@ -1,0 +1,27 @@
+$form-height: 100px;
+
+html, body, #app {
+    height: 100%;
+}
+
+.app {
+    position: relative;
+    height: 100%;
+
+    .comment-tree {
+        height: 100%;
+        overflow: auto;
+        &::after {
+            content: " ";
+            height: $form-height;
+            display: table;
+            background: red;
+        }
+    }
+
+    .comment-form {
+        position: fixed;
+        bottom: 0;
+        height: $form-height;
+    }
+}

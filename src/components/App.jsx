@@ -1,5 +1,6 @@
 import React from 'react';
 import CommentTree from './CommentTree';
+import CommentForm from './CommentForm';
 
 const timeNow = Date.now();
 
@@ -56,6 +57,7 @@ const comments = [
 const App = () => (
   <div className="app">
     <CommentTree comments={comments} />
+    <CommentForm />
   </div>
 );
 
