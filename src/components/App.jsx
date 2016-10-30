@@ -1,10 +1,10 @@
 import React from 'react';
 import RootCommentTree from '../containers/RootCommentTree';
-import RootCommentForm from '../containers/RootCommentForm';
+import LoginOrCommentForm from '../containers/LoginOrCommentForm';
 
 const App = () => (
   <div className="app">
-    <RootCommentForm maxTextLength={140} />
+    <LoginOrCommentForm maxTextLength={140} />
     <RootCommentTree />
   </div>
 );

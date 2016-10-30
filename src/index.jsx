@@ -4,21 +4,18 @@ import {createStore} from 'redux';
 import {Provider} from 'react-redux';
 import reducer from './reducers';
 import App from './components/App';
+import {generateAvatarUrl} from './utils/avatar';
 import './stylesheets/main.scss';
 
 const timeNow = Date.now();
 
 const store = createStore(reducer, {
-  currentUser: {
-    username: "Michael Pontus",
-    avatarUrl: "https://robohash.org/mpon",
-  },
   comments: [
     {
       id: 1,
       author: {
         username: "Evgeniy Korzun",
-        avatarUrl: "https://robohash.org/evko",
+        avatarUrl: generateAvatarUrl("Evgeniy Korzun"),
       },
       createdAt: timeNow - 2 * 60,
       text: "Check your internet connection",
@@ -27,7 +24,7 @@ const store = createStore(reducer, {
       id: 2,
       author: {
         username: "Ivanov Ivan",
-        avatarUrl: "https://robohash.org/iviv"
+        avatarUrl: generateAvatarUrl("Ivanov Ivan")
       },
       createdAt: timeNow - 52 * 60,
       text: "Call to customer Jacob to discuss the detail.",
@@ -36,7 +33,7 @@ const store = createStore(reducer, {
           id: 3,
           author: {
             username: "Petrov Petr",
-            avatarUrl: "https://robohash.org/pepe"
+            avatarUrl: generateAvatarUrl("Petrov Petr")
           },
           createdAt: timeNow - 10 * 60,
           text: "I don't have number :(",
@@ -45,7 +42,7 @@ const store = createStore(reducer, {
           id: 4,
           author: {
             username: "Ivanov Ivan",
-            avatarUrl: "https://robohash.org/iviv"
+            avatarUrl: generateAvatarUrl("Ivanov Ivan")
           },
           createdAt: timeNow - 2 * 60,
           text: "Here it is - 123456",
@@ -56,7 +53,7 @@ const store = createStore(reducer, {
       id: 5,
       author: {
         username: "Anonymous",
-        avatarUrl: "https://robohash.org/anon"
+        avatarUrl: generateAvatarUrl("Anonymous")
       },
       createdAt: timeNow - 1 * 3600,
       text: "Wow",
