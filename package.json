@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prod": "NODE_ENV=production node server.js",
+    "postinstall": "webpack -p"
   },
   "keywords": [],
   "author": "",
@@ -24,6 +25,7 @@
   },
   "dependencies": {
     "blueimp-md5": "^2.4.0",
+    "express": "^4.14.0",
     "node-uuid": "^1.4.7",
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
