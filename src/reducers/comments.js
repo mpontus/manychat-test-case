@@ -1,6 +1,7 @@
 import {
   ADD_COMMENT,
   ADD_REPLY,
+  DELETE_COMMENT,
 } from '../constants';
 
 const commentReducer = (state = {}, action) => {
@@ -15,6 +16,11 @@ const commentReducer = (state = {}, action) => {
           ],
         };
       }
+      return {
+        ...state,
+        replies: commentsReducer(state.replies, action),
+      };
+    case DELETE_COMMENT:
       return {
         ...state,
         replies: commentsReducer(state.replies, action),
@@ -34,6 +40,12 @@ const commentsReducer = (state = [], action) => {
     case ADD_REPLY:
       return state.map(
         comment => commentReducer(comment, action),
+      );
+    case DELETE_COMMENT:
+      return state.map(
+        comment => commentReducer(comment, action),
+      ).filter(
+        comment => comment.id !== action.commentId,
       );
     default:
       return state;

@@ -2,6 +2,7 @@ import { v4 as uuid } from 'node-uuid';
 import {
   ADD_COMMENT,
   ADD_REPLY,
+  DELETE_COMMENT,
   SET_REPLYING_TO,
 } from '../constants';
 
@@ -24,6 +25,11 @@ export const addReply = ({author, text, parentId}) => ({
     createdAt: Date.now(),
   },
   parentId,
+});
+
+export const deleteComment = (commentId) => ({
+  type: DELETE_COMMENT,
+  commentId,
 });
 
 export const setReplyingTo = (commentId) => ({
