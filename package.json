@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "blueimp-md5": "^2.4.0",
+    "chance": "^1.0.4",
     "node-uuid": "^1.4.7",
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
