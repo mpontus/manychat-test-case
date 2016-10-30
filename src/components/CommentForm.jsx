@@ -10,6 +10,10 @@ class CommentForm extends Component {
     onSubmit: React.PropTypes.func.isRequired,
   }
 
+  static defaultProps = {
+    maxTextLength: 140,
+  }
+
   constructor() {
     super();
     this.state = {

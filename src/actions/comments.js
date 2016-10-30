@@ -1,10 +1,23 @@
 import { v4 as uuid } from 'node-uuid';
 import {
+  SET_COMMENTS,
   ADD_COMMENT,
   ADD_REPLY,
   DELETE_COMMENT,
   SET_REPLYING_TO,
 } from '../constants';
+import * as api from '../api';
+
+export const fetchComments = () => dispatch => {
+  api.fetchComments().then((comments) => {
+    dispatch(setComments(comments));
+  });
+}
+
+export const setComments = (comments) => ({
+  type: SET_COMMENTS,
+  comments: comments,
+});
 
 export const addComment = ({author, text}) => ({
   type: ADD_COMMENT,
