@@ -1,5 +1,9 @@
 const ADD_COMMENT = 'ADD_COMMENT';
+const ADD_REPLY = 'ADD_REPLY';
+const SET_REPLYING_TO = 'SET_REPLYING_TO';
 
 export {
   ADD_COMMENT,
+  ADD_REPLY,
+  SET_REPLYING_TO,
 };

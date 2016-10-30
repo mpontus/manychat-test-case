@@ -10,6 +10,10 @@ import './stylesheets/main.scss';
 const timeNow = Date.now();
 
 const store = createStore(reducer, {
+  currentUser: {
+    username: "Evgeniy Korzun",
+    avatarUrl: generateAvatarUrl("Evgeniy Korzun"),
+  },
   comments: [
     {
       id: 1,

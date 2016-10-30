@@ -8,20 +8,24 @@ class RootCommentForm extends Component {
   static propTypes = {
     maxTextLength: React.PropTypes.number,
     currentUser: React.PropTypes.object.isRequired,
+    replyingTo: React.PropTypes.any,
     addComment: React.PropTypes.func.isRequired,
   }
 
   handleSubmit(text) {
-    this.props.addComment(
-      this.props.currentUser,
+    this.props.addComment({
+      author: this.props.currentUser,
       text,
-    );
+    });
   }
 
   render() {
+    const {replyingTo, maxTextLength} = this.props;
+    if (replyingTo !== null) {
+      return null;
+    }
     return (
       <CommentForm
-        maxTextLength={this.props.maxTextLength}
         onSubmit={(text) => this.handleSubmit(text)}
       />
     );
@@ -29,6 +33,6 @@ class RootCommentForm extends Component {
 };
 
 export default connect(
-  ({currentUser}) => ({currentUser}),
+  ({currentUser, replyingTo}) => ({currentUser, replyingTo}),
   {addComment: addComment},
 )(RootCommentForm);
