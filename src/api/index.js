@@ -2,7 +2,6 @@ import {v4} from 'node-uuid';
 import Chance from 'chance';
 import {generateAvatarUrl} from '../utils/avatar';
 
-const chance = new Chance();
 
 const timeNow = Date.now();
 
@@ -58,12 +57,35 @@ const db = {
   ],
 };
 
+// TODO obsolete?
+const walkComments = (cb) => {
+  const walk = (root) =>
+    root.forEach(item => {
+      cb(item);
+      walk(item.replies);
+    });
+  walk(db.comments);
+}
+
+function* commentIterator() {
+  function* walkTree(comments, path = []) {
+    for (let comment of comments) {
+      yield { comment, path };
+      yield* walkTree(
+        comment.replies || [],
+        [...path, comment.id],
+      );
+    }
+  }
+  yield* walkTree(db.comments);
+}
+
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const findPath = (id) => {
   const findInList = (list, id, pathSoFar = []) => {
     let result;
-    for (comment of list) {
+    for (let comment of list) {
       let path = [...pathSoFar, id];
       if (comment.id === id) {
         return path;
@@ -78,7 +100,7 @@ const findPath = (id) => {
 }
 
 const addComment = (author, text, parentId = null) => {
-  const newComment = {
+  const comment = {
     id: v4(),
     author: author,
     text: text,
@@ -86,29 +108,24 @@ const addComment = (author, text, parentId = null) => {
   };
 
   if (parentId === null) {
-    db.comments.unshift(newComment);
-    return {
-      ...newComment,
-      parentPath: [],
-    };
+    db.comments.unshift(comment);
+  } else {
+    for (let {parent, path} of commentIterator()) {
+      if (parent.id === parentId) {
+        parent.replies = [comment, ...parent.replies || []];
+        break;
+      }
+    }
   }
-
-  let path = findPath(parentId);
-  let comments = db.comments;
-  while (path.length) {
-    let id = path.shift();
-    comments = comments.find(c => c.id === id).replies;
-  }
-  comments.unshift(newComment);
 
   return {
-    ...newComment,
-    parentPath: path,
+    comment,
+    parentId,
   };
 };
 
 export const fetchComments = () => {
-  return delay(500).then(() => db.comments);
+  return delay(500).then(() => db.comments.slice(0));
 }
 
 export const createComment = (author, text, parentId = null) => {
@@ -117,40 +134,16 @@ export const createComment = (author, text, parentId = null) => {
 
 export const pollComments = (since) => {
   return delay(500).then(() => {
-    let username = chance.name();
-    return [
-      addComment({
-        username,
-        avatar: generateAvatarUrl(username)
-      }, chance.sentence())
-    ];
+    const lookupComments = (comments, parentId) =>
+      comments.reduce((acc, comment) => {
+        if (comment.createdAt > since) {
+          return [...acc, {
+            comment,
+            parentId
+          }];
+        }
+        return acc.concat(lookupComments(comment.replies || [], comment.id));
+      }, []);
+    return lookupComments(db.comments);
   });
 }
-
-// const randomNumber = (max) => Math.floor(Math.random() * 10);
-// 
-// const randomUsername = (() => {
-//   const existingUsernames = [];
-//   return () => {
-//     const n = randomNumber(existingUsernames.length);
-//     if (n === 0) {
-//       existingUsernames.unshift(chance.name());
-//       return existingUsernames[0];
-//     }
-//     return existingUsernames[n - 1];
-//   }
-// })();
-// 
-// const randomComment = () => {
-//   const username = randomUsername();
-//   return {
-//     author: {
-//       username,
-//       avatarUrl: generateAvatarUrl(username),
-//     },
-//     text: chance.sentence(),
-//     createdAt: Date.now(),
-//   };
-// }
-// 
-

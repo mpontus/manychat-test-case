@@ -22,16 +22,10 @@ export const pollComments = () => dispatch => {
   });
 };
 
-export const createComment = (author, text, parentId = null) => {
-  api.createComment(author, text, parentId).then((comment) => {
-    if (parentId === null) {
-      dispatch(addComment(comment));
-    } else {
-      dispatch(addReply({
-        ...comment,
-        parentId: parentId,
-      }));
-    }
+export const createComment = ({author, text}, parentId = null) => {
+  api.createComment(author, text, parentId).then(({comment, parentId}) => {
+    console.log(comment);
+    dispatch(addComment(comment, parentId));
   });
 }
 
@@ -40,9 +34,10 @@ export const setComments = (comments) => ({
   comments: comments,
 });
 
-export const addComment = (comment) => ({
+export const addComment = (comment, parentId) => ({
   type: ADD_COMMENT,
   comment,
+  parentId,
 });
 
 export const addReply = ({author, text, parentId}) => ({

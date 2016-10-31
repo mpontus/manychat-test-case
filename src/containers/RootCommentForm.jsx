@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {addComment} from '../actions';
+import {createComment} from '../actions';
 import CommentForm from '../components/CommentForm';
 
 class RootCommentForm extends Component {
@@ -9,11 +9,11 @@ class RootCommentForm extends Component {
     maxTextLength: React.PropTypes.number,
     currentUser: React.PropTypes.object.isRequired,
     replyingTo: React.PropTypes.any,
-    addComment: React.PropTypes.func.isRequired,
+    createComment: React.PropTypes.func.isRequired,
   }
 
   handleSubmit(text) {
-    this.props.addComment({
+    this.props.createComment({
       author: this.props.currentUser,
       text,
     });
@@ -34,5 +34,5 @@ class RootCommentForm extends Component {
 
 export default connect(
   ({currentUser, replyingTo}) => ({currentUser, replyingTo}),
-  {addComment: addComment},
+  {createComment: createComment},
 )(RootCommentForm);
