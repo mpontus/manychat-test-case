@@ -22,9 +22,8 @@ export const pollComments = () => dispatch => {
   });
 };
 
-export const createComment = ({author, text}, parentId = null) => {
+export const createComment = ({author, text}, parentId = null) => dispatch => {
   api.createComment(author, text, parentId).then(({comment, parentId}) => {
-    console.log(comment);
     dispatch(addComment(comment, parentId));
   });
 }
