@@ -100,7 +100,7 @@ const findPath = (id) => {
 }
 
 const addComment = (author, text, parentId = null) => {
-  const comment = {
+  const newComment = {
     id: v4(),
     author: author,
     text: text,
@@ -108,18 +108,18 @@ const addComment = (author, text, parentId = null) => {
   };
 
   if (parentId === null) {
-    db.comments.unshift(comment);
+    db.comments.unshift(newComment);
   } else {
-    for (let {parent, path} of commentIterator()) {
-      if (parent.id === parentId) {
-        parent.replies = [comment, ...parent.replies || []];
+    for (let {comment, path} of commentIterator()) {
+      if (comment.id === parentId) {
+        comment.replies = [newComment, ...parent.replies || []];
         break;
       }
     }
   }
 
   return {
-    comment,
+    comment: newComment,
     parentId,
   };
 };
