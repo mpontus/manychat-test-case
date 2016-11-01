@@ -138,7 +138,7 @@ export const pollComments = (since) => {
       comments.reduce((acc, comment) => {
         if (comment.createdAt > since) {
           return [...acc, {
-            comment,
+            ...comment,
             parentId
           }];
         }
