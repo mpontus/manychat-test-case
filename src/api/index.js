@@ -8,13 +8,14 @@ const timeNow = Date.now();
 const db = {
   comments: [
     {
-      id: 1,
+      id: 5,
       author: {
-        username: "Evgeniy Korzun",
-        avatarUrl: generateAvatarUrl("Evgeniy Korzun"),
+        username: "Anonymous",
+        avatarUrl: generateAvatarUrl("Anonymous")
       },
-      createdAt: timeNow - 2 * 60,
-      text: "Check your internet connection",
+      createdAt: timeNow - 1 * 3600,
+      text: "Wow",
+      parentId: null,
     },
     {
       id: 2,
@@ -24,134 +25,66 @@ const db = {
       },
       createdAt: timeNow - 52 * 60,
       text: "Call to customer Jacob to discuss the detail.",
-      replies: [
-        {
-          id: 3,
-          author: {
-            username: "Petrov Petr",
-            avatarUrl: generateAvatarUrl("Petrov Petr")
-          },
-          createdAt: timeNow - 10 * 60,
-          text: "I don't have number :(",
-        },
-        {
-          id: 4,
-          author: {
-            username: "Ivanov Ivan",
-            avatarUrl: generateAvatarUrl("Ivanov Ivan")
-          },
-          createdAt: timeNow - 2 * 60,
-          text: "Here it is - 123456",
-        }
-      ],
+      parentId: null,
     },
     {
-      id: 5,
+      id: 3,
       author: {
-        username: "Anonymous",
-        avatarUrl: generateAvatarUrl("Anonymous")
+        username: "Petrov Petr",
+        avatarUrl: generateAvatarUrl("Petrov Petr")
       },
-      createdAt: timeNow - 1 * 3600,
-      text: "Wow",
+      createdAt: timeNow - 10 * 60,
+      text: "I don't have number :(",
+      parentId: 2,
+    },
+    {
+      id: 4,
+      author: {
+        username: "Ivanov Ivan",
+        avatarUrl: generateAvatarUrl("Ivanov Ivan")
+      },
+      createdAt: timeNow - 2 * 60,
+      text: "Here it is - 123456",
+      parentId: 2,
+    },
+    {
+      id: 1,
+      author: {
+        username: "Evgeniy Korzun",
+        avatarUrl: generateAvatarUrl("Evgeniy Korzun"),
+      },
+      createdAt: timeNow - 2 * 60,
+      text: "Check your internet connection",
+      parentId: null,
     },
   ],
 };
 
-// TODO obsolete?
-const walkComments = (cb) => {
-  const walk = (root) =>
-    root.forEach(item => {
-      cb(item);
-      walk(item.replies);
-    });
-  walk(db.comments);
-}
-
-function* commentIterator() {
-  function* walkTree(comments, path = []) {
-    for (let comment of comments) {
-      yield { comment, path };
-      yield* walkTree(
-        comment.replies || [],
-        [...path, comment.id],
-      );
-    }
-  }
-  yield* walkTree(db.comments);
-}
-
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const findPath = (id) => {
-  const findInList = (list, id, pathSoFar = []) => {
-    let result;
-    for (let comment of list) {
-      let path = [...pathSoFar, id];
-      if (comment.id === id) {
-        return path;
-      }
-      if (result = findInlist(comment.replies || [], id, path)) {
-        return result;
-      }
-    }
-    return false;
-  }
-  return findInList(db.comments, id);
-}
-
-const addComment = (author, text, parentId = null) => {
-  const newComment = {
-    id: v4(),
-    author: author,
-    text: text,
-    createdAt: Date.now(),
-  };
-
-  if (parentId === null) {
-    db.comments.unshift(newComment);
-  } else {
-    for (let {comment, path} of commentIterator()) {
-      if (comment.id === parentId) {
-        comment.replies = [newComment, ...parent.replies || []];
-        break;
-      }
-    }
-  }
-
-  return {
-    comment: newComment,
-    parentId,
-  };
-};
-
-export const fetchComments = () => {
-  return delay(500).then(() => db.comments.slice(0));
-}
-
 export const createComment = (author, text, parentId = null) => {
-  return delay(500).then(() => addComment(author, text, parentId));
+  return delay(500).then(() => {
+    const newComment = {
+      id: v4(),
+      author,
+      text,
+      createdAt: Date.now(),
+      parentId,
+    };
+    db.comments.unshift(newComment);
+    return newComment;
+  });
 }
-
-const extractCommentData = (comment) => ({
-  id: comment.id,
-  author: comment.author,
-  createdAt: comment.createdAt,
-  text: comment.text,
-});
 
 export const pollComments = (since = null) => {
   return delay(500).then(() => {
-    const lookupComments = (comments, parentId = null) =>
-      comments.reduce((acc, comment) => {
-        const newAcc = acc.slice();
-        if (since === null || comment.createdAt > since) {
-          newAcc.push({
-            ...extractCommentData(comment),
-            parentId
-          });
-        }
-        return newAcc.concat(lookupComments(comment.replies || [], comment.id));
-      }, []);
-    return lookupComments(db.comments).reverse();
+    const comments = [];
+    for (let comment of db.comments) {
+      if (comment.createdAt <= since) {
+        break;
+      }
+      comments.push(comment);
+    }
+    return comments;
   });
 }

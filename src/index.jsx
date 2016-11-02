@@ -24,17 +24,14 @@ const store = createStore(reducer, {
 
 const pollComments = (since) => {
   setTimeout(() => api.pollComments(since).then(comments => {
-    comments.forEach(comment => store.dispatch(addComment(comment, comment.parentId)));
+    comments.forEach(comment => store.dispatch(addComment(comment)));
     pollComments(Date.now());
   }), 1000);
 }
 
 api.pollComments()
   .then(comments => {
-    store.dispatch(addComment(comments[0], comments[0].parentId));
-    console.log(comments[1]);
-    store.dispatch(addComment(comments[1], comments[1].parentId));
-    // comments.forEach(comment => store.dispatch(addComment(comment, comment.parentId)));
+    comments.forEach(comment => store.dispatch(addComment(comment, comment.parentId)));
     pollComments(Date.now());
   });
 

@@ -53,7 +53,7 @@ const commentChildren = (state = {}, action) => {
         return {
           [action.comment.parentId]: [
             action.comment.id,
-            ...state[action.comment.parentId],
+            ...state[action.comment.parentId] || [],
           ]
         };
       }
