@@ -1,55 +1,107 @@
+import { combineReducers } from 'redux';
 import {
+  SET_COMMENTS,
   ADD_COMMENT,
   ADD_REPLY,
   DELETE_COMMENT,
 } from '../constants';
 
-const commentReducer = (state = {}, action) => {
-  switch (action.type) {
-    case ADD_REPLY:
-      if (state.id === action.parentId) {
-        return {
-          ...state,
-          replies: [
-            action.comment,
-            ...(state.replies || [])
-          ],
-        };
-      }
-      return {
-        ...state,
-        replies: commentsReducer(state.replies, action),
-      };
-    case DELETE_COMMENT:
-      return {
-        ...state,
-        replies: commentsReducer(state.replies, action),
-      };
-    default:
-      return state;
-  }
-}
-
-const commentsReducer = (state = [], action) => {
+const commentsById = (state = {}, action) => {
   switch (action.type) {
     case ADD_COMMENT:
-      return [
-        action.comment,
+      return {
+        [action.comment.id]: action.comment,
         ...state,
-      ];
-    case ADD_REPLY:
-      return state.map(
-        comment => commentReducer(comment, action),
-      );
-    case DELETE_COMMENT:
-      return state.map(
-        comment => commentReducer(comment, action),
-      ).filter(
-        comment => comment.id !== action.commentId,
-      );
+      };
     default:
       return state;
   }
 };
 
-export default commentsReducer;
+const commentIds = (state = [], action) => {
+  switch (action.type) {
+    case ADD_COMMENT:
+      if (!action.comment.parentId) {
+        return [
+          action.comment.id,
+          ...state,
+        ];
+      }
+    default:
+      return state;
+  }
+};
+
+const commentParentIds = (state = {}, action) => {
+  switch (action.type) {
+    case ADD_COMMENT:
+      if (action.comment.parentId) {
+        return {
+          ...state,
+          [action.comment.id]: action.comment.parentId,
+        };
+      }
+    default:
+      return state;
+  }
+};
+
+const commentChildren = (state = {}, action) => {
+  switch (action.type) {
+    case ADD_COMMENT:
+      if (action.comment.parentId) {
+        return {
+          ...state,
+          [action.comment.parentId]: [
+            action.comment.id,
+            ...state[action.comment.parentId] || [],
+          ],
+        };
+      }
+    default:
+      return state;
+  }
+};
+
+export const getComment = (state, id) => state.commentsById[id];
+
+export const getTopLevelComments = (state) => {
+  return state.commentIds
+    .filter(id => !state.commentParentIds[id])
+    .map(id => getComment(state, id));
+}
+
+export const getCommentChildren = (state, id) =>
+  (state.commentChildren[id] || []).map(id => getComment(state, id));
+
+export const getCommentChildrenTree = (state, id) =>
+  getCommentChildren(state, id).map(comment => ({
+    ...comment,
+    replies: getCommentChildrenTree(state, comment.id),
+  }));
+
+export const getCommentTree = (state) => {
+  const comments = getTopLevelComments(state).map(comment => ({
+    ...comment,
+    replies: getCommentChildrenTree(state, comment.id),
+  }));
+  return comments;
+}
+
+const ensureUniqueComments = reducer => (state, action) => {
+  switch (action.type) {
+    case ADD_COMMENT:
+      if (state.commentsById[action.comment.id])
+        return state;
+    default:
+      return reducer(state, action);
+  }
+}
+
+export default ensureUniqueComments(combineReducers({
+  commentsById,
+  commentIds,
+  commentParentIds,
+  commentChildren,
+}));
+

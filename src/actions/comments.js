@@ -1,30 +1,22 @@
 import { v4 as uuid } from 'node-uuid';
 import {
+  SET_COMMENTS,
   ADD_COMMENT,
   ADD_REPLY,
   DELETE_COMMENT,
   SET_REPLYING_TO,
 } from '../constants';
+import * as api from '../api';
 
-export const addComment = ({author, text}) => ({
+export const createComment = ({author, text}, parentId = null) => dispatch => {
+  api.createComment(author, text, parentId).then(comment =>
+    dispatch(addComment(comment))
+  );
+}
+
+export const addComment = (comment) => ({
   type: ADD_COMMENT,
-  comment: {
-    id: uuid(),
-    author,
-    text,
-    createdAt: Date.now(),
-  },
-});
-
-export const addReply = ({author, text, parentId}) => ({
-  type: ADD_REPLY,
-  comment: {
-    id: uuid(),
-    author,
-    text,
-    createdAt: Date.now(),
-  },
-  parentId,
+  comment,
 });
 
 export const deleteComment = (commentId) => ({

@@ -1,69 +1,42 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {createStore} from 'redux';
-import {Provider} from 'react-redux';
+import { createStore, applyMiddleware, compose } from 'redux';
+import thunk from 'redux-thunk';
+import { Provider } from 'react-redux';
+import Chance from 'chance';
 import reducer from './reducers';
+import { setComments, addComment } from './actions';
+import * as api from './api';
 import App from './components/App';
-import {generateAvatarUrl} from './utils/avatar';
+import { generateAvatarUrl } from './utils/avatar';
+import { createFakeComment, fakeCommentLoop } from './utils/fake';
 import './stylesheets/main.scss';
 
-const timeNow = Date.now();
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const store = createStore(reducer, {
   currentUser: {
     username: "Evgeniy Korzun",
     avatarUrl: generateAvatarUrl("Evgeniy Korzun"),
   },
-  comments: [
-    {
-      id: 1,
-      author: {
-        username: "Evgeniy Korzun",
-        avatarUrl: generateAvatarUrl("Evgeniy Korzun"),
-      },
-      createdAt: timeNow - 2 * 60,
-      text: "Check your internet connection",
-    },
-    {
-      id: 2,
-      author: {
-        username: "Ivanov Ivan",
-        avatarUrl: generateAvatarUrl("Ivanov Ivan")
-      },
-      createdAt: timeNow - 52 * 60,
-      text: "Call to customer Jacob to discuss the detail.",
-      replies: [
-        {
-          id: 3,
-          author: {
-            username: "Petrov Petr",
-            avatarUrl: generateAvatarUrl("Petrov Petr")
-          },
-          createdAt: timeNow - 10 * 60,
-          text: "I don't have number :(",
-        },
-        {
-          id: 4,
-          author: {
-            username: "Ivanov Ivan",
-            avatarUrl: generateAvatarUrl("Ivanov Ivan")
-          },
-          createdAt: timeNow - 2 * 60,
-          text: "Here it is - 123456",
-        }
-      ],
-    },
-    {
-      id: 5,
-      author: {
-        username: "Anonymous",
-        avatarUrl: generateAvatarUrl("Anonymous")
-      },
-      createdAt: timeNow - 1 * 3600,
-      text: "Wow",
-    },
-  ],
-}, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+}, composeEnhancers(applyMiddleware(thunk)));
+
+
+const pollComments = (since) => {
+  setTimeout(() => api.pollComments(since).then(comments => {
+    comments.forEach(comment => store.dispatch(addComment(comment)));
+    pollComments(Date.now());
+  }), 1000);
+}
+
+api.pollComments()
+  .then(comments => {
+    comments.forEach(comment => store.dispatch(addComment(comment, comment.parentId)));
+    pollComments(Date.now());
+  });
+
+window.createFakeComment = createFakeComment;
+// fakeCommentLoop();
 
 ReactDOM.render(
   <Provider store={store}>
@@ -71,5 +44,3 @@ ReactDOM.render(
   </Provider>,
   document.getElementById('app')
 );
-
-

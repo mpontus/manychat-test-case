@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {addReply, setReplyingTo} from '../actions';
+import {createComment, setReplyingTo} from '../actions';
 import CommentForm from '../components/CommentForm';
 
 class ReplyForm extends Component {
@@ -10,11 +10,10 @@ class ReplyForm extends Component {
   }
 
   handleSubmit(text) {
-    this.props.addReply({
+    this.props.createComment({
       author: this.props.currentUser,
       text,
-      parentId: this.props.comment.id,
-    });
+    }, this.props.comment.id);
     this.props.setReplyingTo(null);
   }
 
@@ -35,5 +34,5 @@ class ReplyForm extends Component {
 
 export default connect(
   ({replyingTo, currentUser}) => ({replyingTo, currentUser}),
-  {addReply, setReplyingTo},
+  {createComment, setReplyingTo},
 )(ReplyForm);
