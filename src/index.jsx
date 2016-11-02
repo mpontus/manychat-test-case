@@ -35,7 +35,7 @@ api.pollComments()
     pollComments(Date.now());
   });
 
-fakeCommentLoop(1000);
+fakeCommentLoop(4000);
 
 ReactDOM.render(
   <Provider store={store}>
