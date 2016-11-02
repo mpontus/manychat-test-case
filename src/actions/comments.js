@@ -9,9 +9,9 @@ import {
 import * as api from '../api';
 
 export const createComment = ({author, text}, parentId = null) => dispatch => {
-  api.createComment(author, text, parentId).then(({comment, parentId}) => {
-    dispatch(addComment(comment, parentId));
-  });
+  api.createComment(author, text, parentId).then(comment =>
+    dispatch(addComment(comment))
+  );
 }
 
 export const addComment = (comment) => ({
