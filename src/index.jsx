@@ -19,7 +19,6 @@ const store = createStore(reducer, {
     username: "Evgeniy Korzun",
     avatarUrl: generateAvatarUrl("Evgeniy Korzun"),
   },
-  comments: [],
 }, composeEnhancers(applyMiddleware(thunk)));
 
 

@@ -9,4 +9,5 @@ const rootReducer = combineReducers({
   comments,
 });
 
+export * from './comments';
 export default rootReducer;
