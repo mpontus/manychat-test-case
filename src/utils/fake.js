@@ -10,15 +10,13 @@ const randomInt = (max) => Math.floor(Math.random() * max);
 
 const chance = new Chance();
 
-const getRandomParent = () =>
-  api.fetchComments().then(comments => {
-    const flatComments = flatten(comments, c => c.replies || []);
-    const index = randomInt(flatComments.length);
-    return flatComments[index];
-  });
+const getRandomComment = () =>
+  api.pollComments().then(comments =>
+    comments[randomInt(comments.length)]
+  );
 
 export const createFakeComment = () =>
-  getRandomParent().then(parent => {
+  getRandomComment().then(parent => {
     const username = chance.name();
     return api.createComment({
       username: username,
