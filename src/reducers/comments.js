@@ -63,31 +63,6 @@ const commentChildren = (state = {}, action) => {
   }
 };
 
-export const getComment = (state, id) => state.commentsById[id];
-
-export const getTopLevelComments = (state) => {
-  return state.commentIds
-    .filter(id => !state.commentParentIds[id])
-    .map(id => getComment(state, id));
-}
-
-export const getCommentChildren = (state, id) =>
-  (state.commentChildren[id] || []).map(id => getComment(state, id));
-
-export const getCommentChildrenTree = (state, id) =>
-  getCommentChildren(state, id).map(comment => ({
-    ...comment,
-    replies: getCommentChildrenTree(state, comment.id),
-  }));
-
-export const getCommentTree = (state) => {
-  const comments = getTopLevelComments(state).map(comment => ({
-    ...comment,
-    replies: getCommentChildrenTree(state, comment.id),
-  }));
-  return comments;
-}
-
 const ensureUniqueComments = reducer => (state, action) => {
   switch (action.type) {
     case ADD_COMMENT:
@@ -105,3 +80,24 @@ export default ensureUniqueComments(combineReducers({
   commentChildren,
 }));
 
+const getComment = (state, id) => state.commentsById[id];
+
+const getTopLevelComments = (state) =>
+  state.commentIds
+    .filter(id => !state.commentParentIds[id])
+    .map(id => getComment(state, id));
+
+const getCommentChildren = (state, id) =>
+  (state.commentChildren[id] || []).map(id => getComment(state, id));
+
+const getCommentChildrenTree = (state, id) =>
+  getCommentChildren(state, id).map(comment => ({
+    ...comment,
+    replies: getCommentChildrenTree(state, comment.id),
+  }));
+
+export const getCommentTree = (state) =>
+  getTopLevelComments(state).map(comment => ({
+    ...comment,
+    replies: getCommentChildrenTree(state, comment.id),
+  }));

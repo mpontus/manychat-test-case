@@ -1,7 +1,7 @@
-import {combineReducers} from 'redux';
+import { combineReducers } from 'redux';
 import currentUser from './currentUser';
 import replyingTo from './replyingTo';
-import comments from './comments';
+import comments, * as fromComments from './comments';
 
 const rootReducer = combineReducers({
   currentUser,
@@ -9,5 +9,7 @@ const rootReducer = combineReducers({
   comments,
 });
 
-export * from './comments';
 export default rootReducer;
+
+export const getCommentTree = (state) =>
+  fromComments.getCommentTree(state.comments);

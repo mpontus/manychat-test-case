@@ -11,6 +11,6 @@ const RootCommentTree = ({comments}) => (
 
 export default connect(
   state => ({
-    comments: getCommentTree(state.comments)
+    comments: getCommentTree(state)
   }),
 )(RootCommentTree);
