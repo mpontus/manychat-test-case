@@ -29,9 +29,12 @@ const pollComments = (since) => {
   }), 1000);
 }
 
-api.fetchComments()
+api.pollComments()
   .then(comments => {
-    store.dispatch(setComments(comments))
+    store.dispatch(addComment(comments[0], comments[0].parentId));
+    console.log(comments[1]);
+    store.dispatch(addComment(comments[1], comments[1].parentId));
+    // comments.forEach(comment => store.dispatch(addComment(comment, comment.parentId)));
     pollComments(Date.now());
   });
 

@@ -132,18 +132,26 @@ export const createComment = (author, text, parentId = null) => {
   return delay(500).then(() => addComment(author, text, parentId));
 }
 
-export const pollComments = (since) => {
+const extractCommentData = (comment) => ({
+  id: comment.id,
+  author: comment.author,
+  createdAt: comment.createdAt,
+  text: comment.text,
+});
+
+export const pollComments = (since = null) => {
   return delay(500).then(() => {
-    const lookupComments = (comments, parentId) =>
+    const lookupComments = (comments, parentId = null) =>
       comments.reduce((acc, comment) => {
-        if (comment.createdAt > since) {
-          return [...acc, {
-            ...comment,
+        const newAcc = acc.slice();
+        if (since === null || comment.createdAt > since) {
+          newAcc.push({
+            ...extractCommentData(comment),
             parentId
-          }];
+          });
         }
-        return acc.concat(lookupComments(comment.replies || [], comment.id));
+        return newAcc.concat(lookupComments(comment.replies || [], comment.id));
       }, []);
-    return lookupComments(db.comments);
+    return lookupComments(db.comments).reverse();
   });
 }
