@@ -28,7 +28,8 @@ class CommentForm extends Component {
     });
   }
 
-  handleSubmit(text) {
+  handleSubmit() {
+    const { text } = this.state;
     const trimmedText = text.trim();
 
     this.setState({
@@ -51,7 +52,9 @@ class CommentForm extends Component {
       }
     }
 
-    this.props.onSubmit(trimmedText);
+    this.props.onSubmit({
+      text: trimmedText
+    });
 
     this.setState({
       text: "",
@@ -69,7 +72,7 @@ class CommentForm extends Component {
         <CommentTextarea
           defaultText={this.state.text}
           onChange={(value) => this.handleChange(value)}
-          onSubmit={(value) => this.handleSubmit(value)}
+          onSubmit={() => this.handleSubmit()}
         />
         {this.props.maxTextLength &&
          <CommentCharCounter
