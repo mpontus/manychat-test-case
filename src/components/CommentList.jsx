@@ -1,19 +1,39 @@
 import React from 'react';
 import CommentItem from './CommentItem';
-import ReplyForm from '../containers/ReplyForm';
 
-const CommentList = ({comments}) => (
+const CommentList = ({
+  comments,
+  replyingTo,
+  onCreateComment,
+  onDeleteComment,
+  onSetReplyingTo,
+  canDeleteComment,
+  canReplyToComment,
+}) => (
   <ul className="comment-list">
     {comments.map(comment => (
-      <li key={comment.id}>
-        <CommentItem comment={comment} />
-        <ReplyForm comment={comment} />
-        {comment.replies &&
-         <CommentList comments={comment.replies} />
-        }
-      </li>
+       <CommentItem
+         key={comment.id}
+         comment={comment}
+         replyingTo={replyingTo}
+         onCreateComment={onCreateComment}
+         onDeleteComment={onDeleteComment}
+         onSetReplyingTo={onSetReplyingTo}
+         canDeleteComment={canDeleteComment}
+         canReplyToComment={canReplyToComment}
+       />
      ))}
   </ul>
 );
+
+CommentList.propTypes = {
+  comments: React.PropTypes.array.isRequired,
+  replyingTo: React.PropTypes.any,
+  onCreateComment: React.PropTypes.func.isRequired,
+  onDeleteComment: React.PropTypes.func.isRequired,
+  onSetReplyingTo: React.PropTypes.func.isRequired,
+  canDeleteComment: React.PropTypes.func.isRequired,
+  canReplyToComment: React.PropTypes.func.isRequired,
+};
 
 export default CommentList;

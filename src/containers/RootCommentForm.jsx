@@ -4,35 +4,30 @@ import {createComment} from '../actions';
 import CommentForm from '../components/CommentForm';
 
 class RootCommentForm extends Component {
-
   static propTypes = {
-    maxTextLength: React.PropTypes.number,
-    currentUser: React.PropTypes.object.isRequired,
-    replyingTo: React.PropTypes.any,
+    currentUser: React.PropTypes.any,
     createComment: React.PropTypes.func.isRequired,
   }
 
-  handleSubmit(text) {
-    this.props.createComment({
-      author: this.props.currentUser,
-      text,
+  handleCreateComment(comment) {
+    const { currentUser, createComment } = this.props;
+
+    createComment({
+      author: currentUser,
+      ...comment,
     });
   }
 
   render() {
-    const {replyingTo, maxTextLength} = this.props;
-    if (replyingTo !== null) {
-      return null;
-    }
     return (
       <CommentForm
-        onSubmit={(text) => this.handleSubmit(text)}
+        onSubmit={comment => this.handleCreateComment(comment)}
       />
     );
   }
-};
+}
 
 export default connect(
-  ({currentUser, replyingTo}) => ({currentUser, replyingTo}),
-  {createComment: createComment},
+  ({currentUser}) => ({currentUser}),
+  {createComment},
 )(RootCommentForm);
