@@ -3,7 +3,7 @@ import {
   SET_COMMENTS,
   ADD_COMMENT,
   ADD_REPLY,
-  DELETE_COMMENT,
+  REMOVE_COMMENT,
 } from '../constants';
 
 const commentsById = (state = {}, action) => {
@@ -13,6 +13,12 @@ const commentsById = (state = {}, action) => {
         [action.comment.id]: action.comment,
         ...state,
       };
+    case REMOVE_COMMENT:
+      console.log(state, action);
+      return {
+        ...state,
+        [action.comment.id]: undefined,
+      }
     default:
       return state;
   }
@@ -27,6 +33,8 @@ const commentIds = (state = [], action) => {
           ...state,
         ];
       }
+    case REMOVE_COMMENT:
+      return state.filter(id => id !== action.comment.id)
     default:
       return state;
   }
@@ -40,6 +48,17 @@ const commentParentIds = (state = {}, action) => {
           ...state,
           [action.comment.id]: action.comment.parentId,
         };
+      } else {
+        return state;
+      }
+    case REMOVE_COMMENT:
+      if (action.comment.parentId) {
+        return {
+          ...state,
+          [action.comment.id]: undefined,
+        };
+      } else {
+        return state;
       }
     default:
       return state;
@@ -57,6 +76,20 @@ const commentChildren = (state = {}, action) => {
             ...state[action.comment.parentId] || [],
           ],
         };
+      } else {
+        return state;
+      }
+    case REMOVE_COMMENT:
+      if (action.comment.parentId) {
+        return {
+          ...state,
+          [action.comment.parentId]:
+          state[action.comment.parentId].filter(
+            id => id !== action.comment.id
+          )
+        }
+      } else {
+        return state;
       }
     default:
       return state;
@@ -66,8 +99,9 @@ const commentChildren = (state = {}, action) => {
 const ensureUniqueComments = reducer => (state, action) => {
   switch (action.type) {
     case ADD_COMMENT:
-      if (state.commentsById[action.comment.id])
+      if (state.commentsById[action.comment.id]) {
         return state;
+      }
     default:
       return reducer(state, action);
   }

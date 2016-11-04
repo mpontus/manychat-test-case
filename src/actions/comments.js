@@ -3,7 +3,7 @@ import {
   SET_COMMENTS,
   ADD_COMMENT,
   ADD_REPLY,
-  DELETE_COMMENT,
+  REMOVE_COMMENT,
   SET_REPLYING_TO,
 } from '../constants';
 import * as api from '../api';
@@ -19,14 +19,21 @@ export const createComment = ({ text }, parentId = null) =>
     );
   }
 
+export const deleteComment = (comment) => (dispatch, getState) => {
+  const { currentUser } = getState();
+  api.deleteComment(currentUser, comment.id).then(comment => {
+    dispatch(removeComment(comment))
+  });
+}
+
 export const addComment = (comment) => ({
   type: ADD_COMMENT,
   comment,
 });
 
-export const deleteComment = (commentId) => ({
-  type: DELETE_COMMENT,
-  commentId,
+export const removeComment = (comment) => ({
+  type: REMOVE_COMMENT,
+  comment,
 });
 
 export const setReplyingTo = (commentId) => ({
