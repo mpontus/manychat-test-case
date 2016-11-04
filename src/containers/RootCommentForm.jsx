@@ -1,33 +1,11 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
-import {createComment} from '../actions';
-import CommentForm from '../components/CommentForm';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import ReplyForm from './ReplyForm';
 
-class RootCommentForm extends Component {
-  static propTypes = {
-    currentUser: React.PropTypes.any,
-    createComment: React.PropTypes.func.isRequired,
-  }
-
-  handleCreateComment(comment) {
-    const { currentUser, createComment } = this.props;
-
-    createComment({
-      author: currentUser,
-      ...comment,
-    });
-  }
-
-  render() {
-    return (
-      <CommentForm
-        onSubmit={comment => this.handleCreateComment(comment)}
-      />
-    );
-  }
-}
+const RootCommentForm = ({ replyingTo }) => (
+  replyingTo === null && <ReplyForm parent={null} />
+);
 
 export default connect(
-  ({currentUser}) => ({currentUser}),
-  {createComment},
+  ({ replyingTo }) => ({ replyingTo }),
 )(RootCommentForm);
