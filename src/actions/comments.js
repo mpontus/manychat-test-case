@@ -8,7 +8,7 @@ import {
 } from '../constants';
 import * as api from '../api';
 
-export const createComment = ({author, text}, parentId = null) =>
+export const createComment = ({ text }, parentId = null) =>
   (dispatch, getState) => {
     const { currentUser } = getState();
     if (currentUser === null) {
