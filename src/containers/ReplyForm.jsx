@@ -7,6 +7,7 @@ class ReplyForm extends Component {
 
   static propTypes = {
     parent: React.PropTypes.object,
+    replyingTo: React.PropTypes.any,
     createComment: React.PropTypes.func.isRequired,
     setReplyingTo: React.PropTypes.func.isRequired,
   }
@@ -23,6 +24,12 @@ class ReplyForm extends Component {
   }
 
   render() {
+    const { parent, replyingTo } = this.props;
+
+    if (replyingTo !== (parent ? parent.id : null)) {
+      return null;
+    }
+
     return (
       <CommentForm
         onSubmit={(comment) => this.handleSubmit(comment)}
@@ -32,6 +39,6 @@ class ReplyForm extends Component {
 };
 
 export default connect(
-  null,
+  ({ replyingTo }) => ({ replyingTo }),
   { createComment, setReplyingTo },
 )(ReplyForm);

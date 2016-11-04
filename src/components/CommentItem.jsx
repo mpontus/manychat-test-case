@@ -7,10 +7,7 @@ import CommentActions from '../containers/CommentActions';
 import CommentList from './CommentList';
 import ReplyForm from '../containers/ReplyForm';
 
-const CommentItem = ({
-  comment,
-  replyingTo,
-}) => (
+const CommentItem = ({ comment }) => (
   <li>
     <div className="comment-item">
       <aside>
@@ -23,13 +20,10 @@ const CommentItem = ({
         <CommentActions comment={comment} />
       </main>
     </div>
-    {replyingTo === comment.id &&
-     <ReplyForm parent={comment} />
-    }
+    <ReplyForm parent={comment} />
     {comment.replies &&
      <CommentList
        comments={comment.replies}
-       replyingTo={replyingTo}
      />
     }
   </li>

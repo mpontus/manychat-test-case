@@ -1,16 +1,12 @@
 import React from 'react';
 import CommentItem from './CommentItem';
 
-const CommentList = ({
-  comments,
-  replyingTo,
-}) => (
+const CommentList = ({ comments }) => (
   <ul className="comment-list">
     {comments.map(comment => (
        <CommentItem
          key={comment.id}
          comment={comment}
-         replyingTo={replyingTo}
        />
      ))}
   </ul>
@@ -18,7 +14,6 @@ const CommentList = ({
 
 CommentList.propTypes = {
   comments: React.PropTypes.array.isRequired,
-  replyingTo: React.PropTypes.any,
 };
 
 export default CommentList;
