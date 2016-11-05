@@ -14,7 +14,6 @@ const commentsById = (state = {}, action) => {
         ...state,
       };
     case REMOVE_COMMENT:
-      console.log(state, action);
       return {
         ...state,
         [action.comment.id]: undefined,

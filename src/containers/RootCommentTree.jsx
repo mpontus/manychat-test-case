@@ -12,7 +12,6 @@ class RootCommentTree extends Component {
   handleCreateComment(comment) {
     const { currentUser, createComment, replyingTo } = this.props;
 
-    console.log(comment, replyingTo);
     createComment({
       author: currentUser,
       ...comment,
