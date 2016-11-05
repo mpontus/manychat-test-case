@@ -5,6 +5,7 @@ import {
   ADD_REPLY,
   REMOVE_COMMENT,
 } from '../constants';
+import { removeComment } from '../actions';
 
 const commentsById = (state = {}, action) => {
   switch (action.type) {
@@ -14,8 +15,11 @@ const commentsById = (state = {}, action) => {
         ...state,
       };
     case REMOVE_COMMENT:
+      const newState = action.comment.replies.reduce((state, comment) => {
+        return commentsById(state, removeComment(comment));
+      }, state);
       return {
-        ...state,
+        ...newState,
         [action.comment.id]: undefined,
       }
     default:
@@ -23,16 +27,20 @@ const commentsById = (state = {}, action) => {
   }
 };
 
-const commentIds = (state = [], action) => {
+const rootCommentIds = (state = [], action) => {
   switch (action.type) {
     case ADD_COMMENT:
-      if (!action.comment.parentId) {
-        return [
-          action.comment.id,
-          ...state,
-        ];
+      if (action.comment.parentId) {
+        return state;
       }
+      return [
+        action.comment.id,
+        ...state,
+      ];
     case REMOVE_COMMENT:
+      if (action.comment.parentId) {
+        return state;
+      }
       return state.filter(id => id !== action.comment.id)
     default:
       return state;
@@ -42,53 +50,67 @@ const commentIds = (state = [], action) => {
 const commentParentIds = (state = {}, action) => {
   switch (action.type) {
     case ADD_COMMENT:
-      if (action.comment.parentId) {
-        return {
-          ...state,
-          [action.comment.id]: action.comment.parentId,
-        };
-      } else {
-        return state;
-      }
+      return {
+        ...state,
+        [action.comment.id]: action.comment.parentId,
+      };
     case REMOVE_COMMENT:
-      if (action.comment.parentId) {
-        return {
-          ...state,
-          [action.comment.id]: undefined,
-        };
-      } else {
-        return state;
-      }
+      const newState = action.comment.replies.reduce((state, comment) => {
+        return commentParentIds(state, removeComment(comment));
+      }, state);
+      return {
+        ...newState,
+        [action.comment.id]: undefined,
+      };
     default:
       return state;
   }
 };
 
-const commentChildren = (state = {}, action) => {
+// When removing a comment
+// 1. Delete its id from its parent's children ids list
+// 2. Delete its own children ids list
+// 3. Delete its children's children ids list
+
+const commentChildrenIds = (state = {}, action) => {
   switch (action.type) {
     case ADD_COMMENT:
-      if (action.comment.parentId) {
-        return {
-          ...state,
-          [action.comment.parentId]: [
-            action.comment.id,
-            ...state[action.comment.parentId] || [],
-          ],
-        };
-      } else {
+      if (action.comment.parentId === null) {
         return state;
       }
+      return {
+        ...state,
+        [action.comment.parentId]: [
+          action.comment.id,
+          ...state[action.comment.parentId] || [],
+        ],
+      };
     case REMOVE_COMMENT:
-      if (action.comment.parentId) {
-        return {
-          ...state,
-          [action.comment.parentId]:
-          state[action.comment.parentId].filter(
-            id => id !== action.comment.id
-          )
-        }
-      } else {
-        return state;
+      // remove children's children lists
+      // FIXME also removes children ids from their parent's children list which
+      // is redundant since we'll be removing it's parent's children list entirely
+      let newState = action.comment.replies.reduce((state, comment) => {
+        return commentChildrenIds(state, removeComment(comment));
+      }, state);
+
+      // remove comment's children list
+      newState = {
+        ...newState,
+        [action.comment.id]: undefined,
+      };
+
+      // do we need to remove comment from its parent list?
+      if (action.comment.parentId === null) {
+        return newState;
+      }
+
+      // remove comment from its parent list
+      return {
+        ...newState,
+        [action.comment.parentId]:
+        state[action.comment.parentId].filter(
+          id => id !== action.comment.id
+        )
       }
     default:
       return state;
@@ -108,26 +130,20 @@ const ensureUniqueComments = reducer => (state, action) => {
 
 export default ensureUniqueComments(combineReducers({
   commentsById,
-  commentIds,
+  rootCommentIds,
   commentParentIds,
-  commentChildren,
+  commentChildrenIds,
 }));
 
-const getComment = (state, id) => state.commentsById[id];
-
 const getCommentChildren = (state, id) =>
-  (state.commentChildren[id] || []).map(id => getComment(state, id));
+  (state.commentChildrenIds[id] || []).map(id => getComment(state, id));
 
-const getCommentChildrenTree = (state, id) =>
-  getCommentChildren(state, id).map(comment => ({
-    ...comment,
-    replies: getCommentChildrenTree(state, comment.id),
-  }));
+const getComment = (state, id) => ({
+  ...state.commentsById[id],
+  parentId: state.commentParentIds[id],
+  replies: getCommentChildren(state, id),
+});
 
 export const getTopLevelComments = (state) =>
-  state.commentIds
-  .filter(id => !state.commentParentIds[id])
-  .map(id => ({
-    ...getComment(state, id),
-    replies: getCommentChildrenTree(state, id),
-  }));
+  state.rootCommentIds
+    .map(id => getComment(state, id));
