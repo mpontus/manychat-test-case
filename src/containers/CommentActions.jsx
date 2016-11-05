@@ -25,26 +25,22 @@ class CommentActions extends Component {
     const { comment, replyingTo, setReplyingTo, deleteComment } = this.props;
 
     return (
-      <ul className="comment-actions">
-        <li>
-          {this.canDeleteComment(comment) &&
-           <button onClick={() => deleteComment(comment)}>
-             Delete
-           </button>
-          }
-        </li>
-        <li>
-          {this.canReplyToComment(comment) &&
-           (replyingTo !== comment.id
-           ? <button onClick={() => setReplyingTo(comment.id)}>
-             Reply
-           </button>
-           : <button onClick={() => setReplyingTo(null)}>
-             Close
-           </button>
-           )}
-        </li>
-      </ul>
+      <div className="comment-actions">
+        {this.canDeleteComment(comment) &&
+         <button onClick={() => deleteComment(comment)}>
+           Delete
+         </button>
+        }
+        {this.canReplyToComment(comment) &&
+         (replyingTo !== comment.id
+         ? <button onClick={() => setReplyingTo(comment.id)}>
+           Reply
+         </button>
+         : <button onClick={() => setReplyingTo(null)}>
+           Close
+         </button>
+         )}
+      </div>
     );
   }
 }

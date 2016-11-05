@@ -1,0 +1,21 @@
+.comment-actions {
+    button {
+        float: left;
+        margin-left: 5px;
+
+        font-size: $font-size-base;
+        background: none;
+        border: none;
+        padding: 0;
+        color: $link-color;
+        cursor: pointer;
+
+        &:hover {
+            color: $link-color-hover;
+        }
+
+        &:first-child {
+            margin-left: 0;
+        }
+    }
+}
