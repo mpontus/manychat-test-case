@@ -21,7 +21,7 @@ export const createComment = ({ text }, parentId = null) =>
 
 export const deleteComment = (comment) => (dispatch, getState) => {
   const { currentUser } = getState();
-  api.deleteComment(currentUser, comment.id).then(comment => {
+  api.deleteComment(currentUser, comment.id).then(() => {
     dispatch(removeComment(comment))
   });
 }
