@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import CommentError from '../components/CommentError';
-import CommentTextarea from '../components/CommentTextarea';
-import CommentCharCounter from '../components/CommentCharCounter';
+import TextareaWithCounter from '../components/TextareaWithCounter';
 
 class CommentForm extends Component {
 
@@ -11,7 +10,7 @@ class CommentForm extends Component {
   }
 
   static defaultProps = {
-    maxTextLength: 140,
+    maxTextLength: 10,
   }
 
   constructor() {
@@ -62,6 +61,7 @@ class CommentForm extends Component {
   }
 
   render() {
+    const { maxTextLength } = this.props;
     return (
       <div className="comment-form">
         {this.state.error &&
@@ -69,16 +69,14 @@ class CommentForm extends Component {
            message={this.state.error}
          />
         }
-        <CommentTextarea
-          defaultText={this.state.text}
-          onChange={(value) => this.handleChange(value)}
-          onSubmit={() => this.handleSubmit()}
+        <TextareaWithCounter
+          className="comment-textarea"
+          counterClassName="comment-textarea-counter"
+          value={this.state.text}
+          maxLength={maxTextLength}
+          onChange={(e) => this.handleChange(e.target.value)}
+          onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && this.handleSubmit()}
         />
-        {this.props.maxTextLength &&
-         <CommentCharCounter
-           charsLeft={this.props.maxTextLength - this.state.text.length}
-         />
-        }
       </div>
     );
   }
