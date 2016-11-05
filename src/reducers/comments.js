@@ -108,7 +108,7 @@ const commentChildrenIds = (state = {}, action) => {
       return {
         ...newState,
         [action.comment.parentId]:
-        state[action.comment.parentId].filter(
+        newState[action.comment.parentId].filter(
           id => id !== action.comment.id
         )
       }
