@@ -21,43 +21,56 @@ class CommentForm extends Component {
     };
   }
 
-  handleChange(text) {
+  handleChange(e) {
     this.setState({
-      text: text,
+      text: e.target.value,
     });
+  }
+
+  handleKeyPress(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      this.handleSubmit();
+    }
+  }
+
+  isValid(displayError = false) {
+    const { text } = this.state;
+    const trimmedText = text.trim();
+
+    if (trimmedText.length === 0) {
+      displayError && this.setState({
+        error: "Comment text must not be empty",
+      });
+      return false;
+    }
+
+    if (this.props.maxTextLength) {
+      const maxTextLength = this.props.maxTextLength;
+      if (trimmedText.length > maxTextLength) {
+        displayError && this.setState({
+          error: `Comment must not exceed ${maxTextLength} characters`,
+        });
+        return false;
+      }
+    }
+
+    return true;
   }
 
   handleSubmit() {
     const { text } = this.state;
     const trimmedText = text.trim();
 
-    this.setState({
-      text: text,
-      error: null,
-    });
+    if (this.isValid(true)) {
+      this.props.onSubmit({
+        text: trimmedText
+      });
 
-    if (trimmedText.length === 0) {
-      return this.setState({
-        error: "Comment text must not be empty",
+      this.setState({
+        text: "",
       });
     }
-
-    if (this.props.maxTextLength !== undefined) {
-      const maxTextLength = this.props.maxTextLength;
-      if (trimmedText.length > maxTextLength) {
-        return this.setState({
-          error: `Comment must not exceed ${maxTextLength} characters`,
-        });
-      }
-    }
-
-    this.props.onSubmit({
-      text: trimmedText
-    });
-
-    this.setState({
-      text: "",
-    });
   }
 
   render() {
@@ -74,9 +87,14 @@ class CommentForm extends Component {
           counterClassName="comment-textarea-counter"
           value={this.state.text}
           maxLength={maxTextLength}
-          onChange={(e) => this.handleChange(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && this.handleSubmit()}
+          onChange={(e) => this.handleChange(e)}
+          onKeyPress={(e) => this.handleKeyPress(e)}
         />
+        <div className="comment-form-actions">
+          <button disabled={!this.isValid()} onClick={(e) => this.handleSubmit()}>
+            Send
+          </button>
+        </div>
       </div>
     );
   }
