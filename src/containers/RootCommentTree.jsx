@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import CommentList from '../components/CommentList';
-import { getCommentTree } from '../reducers';
+import { getTopLevelComments } from '../reducers';
 import {
   createComment,
   deleteComment,
@@ -15,5 +15,5 @@ const RootCommentTree = ({ comments }) => (
 );
 
 export default connect(
-  state => ({ comments: getCommentTree(state) }),
+  state => ({ comments: getTopLevelComments(state) }),
 )(RootCommentTree);

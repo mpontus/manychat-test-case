@@ -115,11 +115,6 @@ export default ensureUniqueComments(combineReducers({
 
 const getComment = (state, id) => state.commentsById[id];
 
-const getTopLevelComments = (state) =>
-  state.commentIds
-    .filter(id => !state.commentParentIds[id])
-    .map(id => getComment(state, id));
-
 const getCommentChildren = (state, id) =>
   (state.commentChildren[id] || []).map(id => getComment(state, id));
 
@@ -129,8 +124,10 @@ const getCommentChildrenTree = (state, id) =>
     replies: getCommentChildrenTree(state, comment.id),
   }));
 
-export const getCommentTree = (state) =>
-  getTopLevelComments(state).map(comment => ({
-    ...comment,
-    replies: getCommentChildrenTree(state, comment.id),
+export const getTopLevelComments = (state) =>
+  state.commentIds
+  .filter(id => !state.commentParentIds[id])
+  .map(id => ({
+    ...getComment(state, id),
+    replies: getCommentChildrenTree(state, id),
   }));

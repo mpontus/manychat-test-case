@@ -11,5 +11,5 @@ const rootReducer = combineReducers({
 
 export default rootReducer;
 
-export const getCommentTree = (state) =>
-  fromComments.getCommentTree(state.comments);
+export const getTopLevelComments = (state) =>
+  fromComments.getTopLevelComments(state.comments);
