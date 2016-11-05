@@ -6,11 +6,13 @@ class CommentForm extends Component {
 
   static propTypes = {
     maxTextLength: React.PropTypes.number,
+    disabled: React.PropTypes.bool,
     onSubmit: React.PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     maxTextLength: 10,
+    disabled: false,
   }
 
   constructor() {
@@ -74,7 +76,7 @@ class CommentForm extends Component {
   }
 
   render() {
-    const { maxTextLength } = this.props;
+    const { maxTextLength, disabled } = this.props;
     return (
       <div className="comment-form">
         {this.state.error &&
@@ -83,6 +85,7 @@ class CommentForm extends Component {
          />
         }
         <TextareaWithCounter
+          disabled={disabled}
           className="comment-textarea"
           counterClassName="comment-textarea-counter"
           value={this.state.text}
@@ -91,7 +94,9 @@ class CommentForm extends Component {
           onKeyPress={(e) => this.handleKeyPress(e)}
         />
         <div className="comment-form-actions">
-          <button disabled={!this.isValid()} onClick={(e) => this.handleSubmit()}>
+          <button
+            disabled={disabled || !this.isValid()}
+            onClick={(e) => this.handleSubmit()}>
             Send
           </button>
         </div>
