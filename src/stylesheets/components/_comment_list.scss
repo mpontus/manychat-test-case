@@ -6,4 +6,18 @@
     .comment-list {
         padding-left: 40px;
     }
+
+    .comment-animation-enter {
+        opacity: 0;
+    }
+
+    .comment-animation-enter-active {
+        opacity: 1;
+        transition: 500ms;
+    }
+
+    .comment-animation-leave-active {
+        opacity: 0;
+        transition: 500ms;
+    }
 }
