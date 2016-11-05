@@ -8,16 +8,16 @@ import {
 } from '../constants';
 import * as api from '../api';
 
-export const createComment = ({ text }, parentId = null) =>
-  (dispatch, getState) => {
-    const { currentUser } = getState();
-    if (currentUser === null) {
-      throw new Error("Anonymous users can't create comments.");
-    }
-    api.createComment(currentUser, text, parentId).then(comment =>
-      dispatch(addComment(comment))
-    );
+export const createComment = ({ text }) => (dispatch, getState) => {
+  const { currentUser, replyingTo } = getState();
+  if (currentUser === null) {
+    throw new Error("Anonymous users can't create comments.");
   }
+  api.createComment(currentUser, text, replyingTo).then(comment => {
+    dispatch(setReplyingTo(null));
+    dispatch(addComment(comment));
+  });
+}
 
 export const deleteComment = (comment) => (dispatch, getState) => {
   const { currentUser } = getState();
