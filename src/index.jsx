@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
-import Chance from 'chance';
+import { IntlProvider } from 'react-intl';
 import reducer from './reducers';
 import { setComments, addComment } from './actions';
 import * as api from './api';
@@ -38,8 +38,10 @@ api.pollComments()
 fakeCommentLoop(4000);
 
 ReactDOM.render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
+  <IntlProvider locale="en">
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </IntlProvider>,
   document.getElementById('app')
 );
