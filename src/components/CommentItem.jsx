@@ -22,9 +22,7 @@ const CommentItem = ({ comment }) => (
     </div>
     <ReplyForm parent={comment} />
     {comment.replies &&
-     <CommentList
-       comments={comment.replies}
-     />
+     <CommentList comments={comment.replies} />
     }
   </li>
 );
