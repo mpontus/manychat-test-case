@@ -9,6 +9,7 @@ import { setComments, addComment } from './actions';
 import * as api from './api';
 import App from './components/App';
 import { generateAvatarUrl } from './utils/avatar';
+import { ConfigurationProvider } from './utils/configuration';
 import { createFakeComment, fakeCommentLoop } from './utils/fake';
 import './stylesheets/main.scss';
 
@@ -37,10 +38,18 @@ api.pollComments()
 
 fakeCommentLoop(4000);
 
+const settings = {
+  maxCommentLength: 280,
+  maxVisibleCommentLength: 140,
+  maxThreadDepth: 3,
+};
+
 ReactDOM.render(
   <IntlProvider locale="en">
     <Provider store={store}>
-      <App />
+      <ConfigurationProvider settings={settings}>
+        <App />
+      </ConfigurationProvider>
     </Provider>
   </IntlProvider>,
   document.getElementById('app')
