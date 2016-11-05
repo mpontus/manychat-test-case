@@ -13,3 +13,6 @@ export default rootReducer;
 
 export const getTopLevelComments = (state) =>
   fromComments.getTopLevelComments(state.comments);
+
+export const isSendingComment = (state) =>
+  fromComments.isSendingComment(state.comments);

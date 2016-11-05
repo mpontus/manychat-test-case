@@ -4,6 +4,7 @@ import {
   ADD_COMMENT,
   ADD_REPLY,
   REMOVE_COMMENT,
+  SET_SENDING_COMMENT,
 } from '../constants';
 import { removeComment } from '../actions';
 
@@ -128,7 +129,16 @@ const ensureUniqueComments = reducer => (state, action) => {
   }
 }
 
+const createStatusReducer = (actionType, defaultState) =>
+  (state = defaultState, action) => {
+    if (action.type === actionType) {
+      return action.status;
+    }
+    return state;
+  }
+
 export default ensureUniqueComments(combineReducers({
+  sendingComment: createStatusReducer(SET_SENDING_COMMENT, false),
   commentsById,
   rootCommentIds,
   commentParentIds,
@@ -147,3 +157,4 @@ const getComment = (state, id) => ({
 export const getTopLevelComments = (state) =>
   state.rootCommentIds
     .map(id => getComment(state, id));
+export const isSendingComment = (state) => state.sendingComment;

@@ -5,6 +5,7 @@ import {
   ADD_REPLY,
   REMOVE_COMMENT,
   SET_REPLYING_TO,
+  SET_SENDING_COMMENT,
 } from '../constants';
 import * as api from '../api';
 
@@ -13,7 +14,9 @@ export const createComment = ({ text }) => (dispatch, getState) => {
   if (currentUser === null) {
     throw new Error("Anonymous users can't create comments.");
   }
+  dispatch(setSendingComment(true));
   api.createComment(currentUser, text, replyingTo).then(comment => {
+    dispatch(setSendingComment(false));
     dispatch(setReplyingTo(null));
     dispatch(addComment(comment));
   });
@@ -25,6 +28,11 @@ export const deleteComment = (comment) => (dispatch, getState) => {
     dispatch(removeComment(comment))
   });
 }
+
+export const setSendingComment = (status) => ({
+  type: SET_SENDING_COMMENT,
+  status,
+});
 
 export const addComment = (comment) => ({
   type: ADD_COMMENT,
