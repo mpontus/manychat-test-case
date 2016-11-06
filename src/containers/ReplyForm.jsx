@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import SessionDetails from './SessionDetails';
 import CommentForm from '../components/CommentForm';
 import { createComment, setReplyingTo } from '../actions';
 import { isSendingComment } from '../reducers';
@@ -32,11 +33,18 @@ class ReplyForm extends Component {
     }
 
     return (
-      <CommentForm
-        disabled={sendingComment}
-        maxTextLength={maxTextLength}
-        onSubmit={(comment) => this.handleSubmit(comment)}
-      />
+      <div className="reply-form">
+        <aside>
+          <SessionDetails />
+        </aside>
+        <main>
+          <CommentForm
+            disabled={sendingComment}
+            maxTextLength={maxTextLength}
+            onSubmit={(comment) => this.handleSubmit(comment)}
+          />
+        </main>
+      </div>
     );
   }
 };

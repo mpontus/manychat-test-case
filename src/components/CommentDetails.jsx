@@ -1,5 +1,5 @@
 import React from 'react';
-import AuthorAvatar from './AuthorAvatar';
+import Avatar from './Avatar';
 import AuthorName from './AuthorName';
 import CommentTimestamp from './CommentTimestamp';
 import CommentText from './CommentText';
@@ -8,7 +8,7 @@ import CommentActions from '../containers/CommentActions';
 const CommentDetails = ({ comment }) => (
   <div className="comment-details">
     <aside>
-      <AuthorAvatar url={comment.author.avatarUrl} />
+      <Avatar src={comment.author.avatarUrl} />
     </aside>
     <main>
       <AuthorName name={comment.author.username} />
