@@ -26,6 +26,7 @@ class LoginForm extends Component {
       <div className="login-form">
         <input
           value={this.state.username}
+          placeholder="Username"
           onChange={(e) => this.handleChange(e.target.value)}
         />
         <button onClick={() => this.handleSubmit()}>
