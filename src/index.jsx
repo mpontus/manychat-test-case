@@ -5,7 +5,7 @@ import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 import { IntlProvider } from 'react-intl';
 import reducer from './reducers';
-import { setComments, addComment } from './actions';
+import { fetchComments, addComment } from './actions';
 import * as api from './api';
 import App from './components/App';
 import { generateAvatarUrl } from './utils/avatar';
@@ -22,19 +22,20 @@ const store = createStore(reducer, {
   },
 }, composeEnhancers(applyMiddleware(thunk)));
 
+store.dispatch(fetchComments());
 
-const pollComments = (since) => {
-  setTimeout(() => api.pollComments(since).then(comments => {
-    comments.forEach(comment => store.dispatch(addComment(comment)));
-    pollComments(Date.now());
-  }), 1000);
-}
+// const pollComments = (since) => {
+//   setTimeout(() => api.pollComments(since).then(comments => {
+//     comments.forEach(comment => store.dispatch(addComment(comment)));
+//     pollComments(Date.now());
+//   }), 1000);
+// }
 
-api.pollComments()
-  .then(comments => {
-    comments.forEach(comment => store.dispatch(addComment(comment, comment.parentId)));
-    pollComments(Date.now());
-  });
+// api.pollComments()
+//   .then(comments => {
+//     comments.forEach(comment => store.dispatch(addComment(comment, comment.parentId)));
+//     pollComments(Date.now());
+//   });
 
 fakeCommentLoop(4000);
 

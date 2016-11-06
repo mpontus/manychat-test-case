@@ -62,6 +62,9 @@ const db = {
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
+export const fetchComments = () =>
+  delay(500).then(() => db.comments.slice(0));
+
 export const createComment = (author, text, parentId = null) => {
   return delay(500).then(() => {
     const newComment = {

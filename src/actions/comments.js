@@ -6,8 +6,17 @@ import {
   REMOVE_COMMENT,
   SET_REPLYING_TO,
   SET_SENDING_COMMENT,
+  SET_RETRIEVING_COMMENTS,
 } from '../constants';
 import * as api from '../api';
+
+export const fetchComments = () => (dispatch) => {
+  dispatch(setRetrievingComments(true));
+  api.fetchComments().then(comments => {
+    dispatch(setComments(comments));
+    dispatch(setRetrievingComments(false));
+  });
+}
 
 export const createComment = ({ text }) => (dispatch, getState) => {
   const { currentUser, replyingTo } = getState();
@@ -29,9 +38,19 @@ export const deleteComment = (comment) => (dispatch, getState) => {
   });
 }
 
+export const setRetrievingComments = (status) => ({
+  type: SET_RETRIEVING_COMMENTS,
+  status,
+});
+
 export const setSendingComment = (status) => ({
   type: SET_SENDING_COMMENT,
   status,
+});
+
+export const setComments = (comments) => ({
+  type: SET_COMMENTS,
+  comments,
 });
 
 export const addComment = (comment) => ({

@@ -5,11 +5,17 @@ import {
   ADD_REPLY,
   REMOVE_COMMENT,
   SET_SENDING_COMMENT,
+  SET_RETRIEVING_COMMENTS,
 } from '../constants';
 import { removeComment } from '../actions';
 
 const commentsById = (state = {}, action) => {
   switch (action.type) {
+    case SET_COMMENTS:
+      return action.comments.reduce((acc, comment) => ({
+        ...acc,
+        [comment.id]: comment,
+      }), {});
     case ADD_COMMENT:
       return {
         [action.comment.id]: action.comment,
@@ -30,6 +36,10 @@ const commentsById = (state = {}, action) => {
 
 const rootCommentIds = (state = [], action) => {
   switch (action.type) {
+    case SET_COMMENTS:
+      return action.comments
+        .filter(comment => comment.parentId === null)
+        .map(comment => comment.id);
     case ADD_COMMENT:
       if (action.comment.parentId) {
         return state;
@@ -50,6 +60,11 @@ const rootCommentIds = (state = [], action) => {
 
 const commentParentIds = (state = {}, action) => {
   switch (action.type) {
+    case SET_COMMENTS:
+      return action.comments.reduce((acc, comment) => ({
+        ...acc,
+        [comment.id]: comment.parentId,
+      }), {});
     case ADD_COMMENT:
       return {
         ...state,
@@ -75,6 +90,19 @@ const commentParentIds = (state = {}, action) => {
 
 const commentChildrenIds = (state = {}, action) => {
   switch (action.type) {
+    case SET_COMMENTS:
+      return action.comments.reduce((acc, comment) => {
+        if (!comment.parentId) {
+          return acc;
+        }
+        return {
+          ...acc,
+          [comment.parentId]: [
+            ...(acc[comment.parentId] || []),
+            comment.id,
+          ],
+        };
+      }, {});
     case ADD_COMMENT:
       if (action.comment.parentId === null) {
         return state;
