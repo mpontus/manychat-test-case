@@ -167,6 +167,7 @@ const createStatusReducer = (actionType, defaultState) =>
 
 export default ensureUniqueComments(combineReducers({
   sendingComment: createStatusReducer(SET_SENDING_COMMENT, false),
+  retrievingComments: createStatusReducer(SET_RETRIEVING_COMMENTS, false),
   commentsById,
   rootCommentIds,
   commentParentIds,
@@ -185,4 +186,7 @@ const getComment = (state, id) => ({
 export const getTopLevelComments = (state) =>
   state.rootCommentIds
     .map(id => getComment(state, id));
+
 export const isSendingComment = (state) => state.sendingComment;
+
+export const isRetrievingComments = (state) => state.retrievingComments;

@@ -16,3 +16,6 @@ export const getTopLevelComments = (state) =>
 
 export const isSendingComment = (state) =>
   fromComments.isSendingComment(state.comments);
+
+export const isRetrievingComments = (state) =>
+  fromComments.isRetrievingComments(state.comments);
