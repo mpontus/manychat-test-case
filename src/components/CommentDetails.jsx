@@ -8,7 +8,7 @@ import CommentActions from '../containers/CommentActions';
 const CommentDetails = ({ comment }) => (
   <div className="comment-details">
     <aside>
-      <Avatar src={comment.author.avatarUrl} />
+      <Avatar src={comment.author.avatarUrl} title={comment.author.username} />
     </aside>
     <main>
       <AuthorName name={comment.author.username} />

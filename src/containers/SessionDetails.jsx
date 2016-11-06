@@ -5,7 +5,7 @@ import { logout } from '../actions';
 
 const SessionDetails = ({ user, logout }) => (
   <div className="session-details">
-    <Avatar src={user.avatarUrl} />
+    <Avatar src={user.avatarUrl} title={user.username} />
     <button className="logout-button"
       onClick={logout}>Log Out</button>
   </div>
