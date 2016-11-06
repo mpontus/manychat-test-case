@@ -9,4 +9,10 @@ button {
     padding: 4px 10px;
     color: $link-color;
     cursor: pointer;
+
+    &[disabled] {
+        background: $light-gray;
+        color: $gray;
+        cursor: default;
+    }
 }
