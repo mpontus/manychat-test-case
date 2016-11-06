@@ -1,8 +1,9 @@
 import React from 'react';
+import FormattedText from './FormattedText';
 
 const CommentText = ({text}) => (
   <div className="comment-text">
-    {text.split('\n').map((line, n) => <p key={n}>{line}</p>)}
+    <FormattedText text={text} />
   </div>
 );
 
