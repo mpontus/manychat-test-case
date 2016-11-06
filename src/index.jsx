@@ -20,12 +20,7 @@ const POLLING_INTERVAL = 1000;
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-const store = createStore(reducer, {
-  currentUser: {
-    username: "Evgeniy Korzun",
-    avatarUrl: generateAvatarUrl("Evgeniy Korzun"),
-  },
-}, composeEnhancers(applyMiddleware(thunk)));
+const store = createStore(reducer, composeEnhancers(applyMiddleware(thunk)));
 
 store.dispatch(fetchComments());
 
