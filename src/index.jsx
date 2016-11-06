@@ -4,14 +4,19 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 import { IntlProvider } from 'react-intl';
-import reducer from './reducers';
-import { fetchComments, addComment } from './actions';
+import reducer, {
+  getCommentsSync,
+  isPollingComments,
+} from './reducers';
+import { fetchComments, pollComments } from './actions';
 import * as api from './api';
 import App from './components/App';
 import { generateAvatarUrl } from './utils/avatar';
 import { ConfigurationProvider } from './utils/configuration';
 import { createFakeComment, fakeCommentLoop } from './utils/fake';
 import './stylesheets/main.scss';
+
+const POLLING_INTERVAL = 1000;
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -24,18 +29,25 @@ const store = createStore(reducer, {
 
 store.dispatch(fetchComments());
 
-// const pollComments = (since) => {
-//   setTimeout(() => api.pollComments(since).then(comments => {
-//     comments.forEach(comment => store.dispatch(addComment(comment)));
-//     pollComments(Date.now());
-//   }), 1000);
-// }
+const pollingCycle = (interval) => {
+  const state = store.getState();
+  const commentsSync = getCommentsSync(state);
+  const pollingComments = isPollingComments(state);
 
-// api.pollComments()
-//   .then(comments => {
-//     comments.forEach(comment => store.dispatch(addComment(comment, comment.parentId)));
-//     pollComments(Date.now());
-//   });
+  if (!commentsSync || pollingComments) {
+    return setTimeout(() => pollingCycle(interval), interval);
+  }
+
+  const timeleft = commentsSync + interval - Date.now();
+  if (timeleft > 0) {
+    return setTimeout(() => pollingCycle(interval), timeleft);
+  }
+
+  store.dispatch(pollComments());
+  setTimeout(() => pollingCycle(interval), interval);
+};
+
+pollingCycle(POLLING_INTERVAL);
 
 fakeCommentLoop(4000);
 

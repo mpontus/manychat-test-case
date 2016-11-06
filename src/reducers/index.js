@@ -11,11 +11,14 @@ const rootReducer = combineReducers({
 
 export default rootReducer;
 
-export const getTopLevelComments = (state) =>
-  fromComments.getTopLevelComments(state.comments);
+export const getCommentsSync = (state) =>
+  fromComments.getCommentsSync(state.comments);
+
+export const isPollingComments = (state) =>
+  fromComments.isPollingComments(state.comments);
 
 export const isSendingComment = (state) =>
   fromComments.isSendingComment(state.comments);
 
-export const isRetrievingComments = (state) =>
-  fromComments.isRetrievingComments(state.comments);
+export const getTopLevelComments = (state) =>
+  fromComments.getTopLevelComments(state.comments);

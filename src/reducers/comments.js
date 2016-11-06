@@ -4,8 +4,9 @@ import {
   ADD_COMMENT,
   ADD_REPLY,
   REMOVE_COMMENT,
+  SET_COMMENTS_SYNC,
   SET_SENDING_COMMENT,
-  SET_RETRIEVING_COMMENTS,
+  SET_POLLING_COMMENTS,
 } from '../constants';
 import { removeComment } from '../actions';
 
@@ -157,6 +158,15 @@ const ensureUniqueComments = reducer => (state, action) => {
   }
 }
 
+const commentsSync = (state = null, action) => {
+  switch (action.type) {
+    case SET_COMMENTS_SYNC:
+      return action.timestamp;
+    default:
+      return state;
+  }
+}
+
 const createStatusReducer = (actionType, defaultState) =>
   (state = defaultState, action) => {
     if (action.type === actionType) {
@@ -166,8 +176,9 @@ const createStatusReducer = (actionType, defaultState) =>
   }
 
 export default ensureUniqueComments(combineReducers({
+  commentsSync,
   sendingComment: createStatusReducer(SET_SENDING_COMMENT, false),
-  retrievingComments: createStatusReducer(SET_RETRIEVING_COMMENTS, false),
+  pollingComments: createStatusReducer(SET_POLLING_COMMENTS, false),
   commentsById,
   rootCommentIds,
   commentParentIds,
@@ -187,6 +198,8 @@ export const getTopLevelComments = (state) =>
   state.rootCommentIds
     .map(id => getComment(state, id));
 
-export const isSendingComment = (state) => state.sendingComment;
+export const getCommentsSync = (state) => state.commentsSync;
 
-export const isRetrievingComments = (state) => state.retrievingComments;
+export const isPollingComments = (state) => state.pollingComments;
+
+export const isSendingComment = (state) => state.sendingComment;

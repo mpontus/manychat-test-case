@@ -5,17 +5,29 @@ import {
   ADD_REPLY,
   REMOVE_COMMENT,
   SET_REPLYING_TO,
+  SET_COMMENTS_SYNC,
   SET_SENDING_COMMENT,
-  SET_RETRIEVING_COMMENTS,
+  SET_POLLING_COMMENTS,
 } from '../constants';
 import * as api from '../api';
 
 export const fetchComments = () => (dispatch) => {
-  dispatch(setRetrievingComments(true));
   api.fetchComments().then(comments => {
     dispatch(setComments(comments));
-    dispatch(setRetrievingComments(false));
+    dispatch(setCommentsSync(Date.now()));
   });
+}
+
+export const pollComments = () => (dispatch, getState) => {
+  const { commentsSync, pollingComments } = getState();
+  if (!pollingComments) {
+    dispatch(setPollingComments(true));
+    api.pollComments(commentsSync).then(comments => {
+      comments.forEach(comment => dispatch(addComment(comment)));
+      dispatch(setCommentsSync(Date.now()));
+      dispatch(setPollingComments(false));
+    });
+  }
 }
 
 export const createComment = ({ text }) => (dispatch, getState) => {
@@ -38,8 +50,13 @@ export const deleteComment = (comment) => (dispatch, getState) => {
   });
 }
 
-export const setRetrievingComments = (status) => ({
-  type: SET_RETRIEVING_COMMENTS,
+export const setCommentsSync = (timestamp) => ({
+  type: SET_COMMENTS_SYNC,
+  timestamp,
+});
+
+export const setPollingComments = (status) => ({
+  type: SET_POLLING_COMMENTS,
   status,
 });
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { isRetrievingComments } from '../reducers';
+import { getCommentsSync } from '../reducers';
 
 const PreloaderGate = ({ placeholder, children, bypass }) =>
   bypass ? <div>{children}</div> : placeholder;
@@ -12,5 +12,5 @@ PreloaderGate.propTypes = {
 };
 
 export default connect(
-  state => ({ bypass: !isRetrievingComments(state) }),
+  state => ({ bypass: getCommentsSync(state) !== null }),
 )(PreloaderGate);
