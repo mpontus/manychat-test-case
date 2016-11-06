@@ -13,7 +13,7 @@ import * as api from './api';
 import App from './components/App';
 import { generateAvatarUrl } from './utils/avatar';
 import { ConfigurationProvider } from './utils/configuration';
-import { createFakeComment, fakeCommentLoop } from './utils/fake';
+import * as fake from './utils/fake';
 import './stylesheets/main.scss';
 
 const POLLING_INTERVAL = 1000;
@@ -29,27 +29,29 @@ const store = createStore(reducer, {
 
 store.dispatch(fetchComments());
 
-const pollingCycle = (interval) => {
+const pollingLoop = (interval) => {
   const state = store.getState();
   const commentsSync = getCommentsSync(state);
   const pollingComments = isPollingComments(state);
 
   if (!commentsSync || pollingComments) {
-    return setTimeout(() => pollingCycle(interval), interval);
+    return setTimeout(() => pollingLoop(interval), interval);
   }
 
   const timeleft = commentsSync + interval - Date.now();
   if (timeleft > 0) {
-    return setTimeout(() => pollingCycle(interval), timeleft);
+    return setTimeout(() => pollingLoop(interval), timeleft);
   }
 
   store.dispatch(pollComments());
-  setTimeout(() => pollingCycle(interval), interval);
+  setTimeout(() => pollingLoop(interval), interval);
 };
 
-pollingCycle(POLLING_INTERVAL);
+pollingLoop(POLLING_INTERVAL);
 
-fakeCommentLoop(4000);
+setInterval(fake.createRandomComment, 4000);
+setInterval(fake.createRandomReply, 6000);
+setInterval(fake.deleteRandomComment, 8000);
 
 const settings = {
   maxCommentLength: 280,

@@ -20,5 +20,8 @@ export const isPollingComments = (state) =>
 export const isSendingComment = (state) =>
   fromComments.isSendingComment(state.comments);
 
+export const getComment = (state, id) =>
+  fromComments.getComment(state.comments, id);
+
 export const getTopLevelComments = (state) =>
   fromComments.getTopLevelComments(state.comments);

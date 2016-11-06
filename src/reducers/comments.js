@@ -188,11 +188,17 @@ export default ensureUniqueComments(combineReducers({
 const getCommentChildren = (state, id) =>
   (state.commentChildrenIds[id] || []).map(id => getComment(state, id));
 
-const getComment = (state, id) => ({
-  ...state.commentsById[id],
-  parentId: state.commentParentIds[id],
-  replies: getCommentChildren(state, id),
-});
+export const getComment = (state, id) => {
+  const comment = state.commentsById[id];
+  if (comment === undefined) {
+    return null;
+  }
+  return {
+    ...comment,
+    parentId: state.commentParentIds[id],
+    replies: getCommentChildren(state, id),
+  };
+}
 
 export const getTopLevelComments = (state) =>
   state.rootCommentIds

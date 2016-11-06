@@ -1,38 +1,44 @@
+import Chance from 'chance';
 import { generateAvatarUrl } from '../utils/avatar';
 import * as api from '../api';
 
-import Chance from 'chance';
-
-const flatten = (tree, fn) =>
-  tree.reduce((acc, cur) => [...acc, cur, ...flatten(fn(cur), fn)], []);
+const chance = new Chance();
 
 const randomInt = (max) => Math.floor(Math.random() * max);
 
-const chance = new Chance();
-
-const getRandomComment = () =>
-  api.pollComments().then(comments =>
-    comments[randomInt(comments.length)]
-  );
-
-export const createFakeComment = () => {
-  if (randomInt(2)) {
-    return getRandomComment().then(parent => {
-      const username = chance.name();
-      return api.createComment({
-        username: username,
-        avatarUrl: generateAvatarUrl(username),
-      }, chance.sentence(), parent.id);
-    });
-  } else {
-    const username = chance.name();
-    return api.createComment({
-      username: username,
-      avatarUrl: generateAvatarUrl(username),
-    }, chance.sentence());
+const generateAuthor = () => {
+  const username = chance.name();
+  return {
+    username: username,
+    avatarUrl: generateAvatarUrl(username),
   }
 }
 
-export const fakeCommentLoop = (ms) => {
-  setTimeout(() => createFakeComment().then(() => fakeCommentLoop(ms)), ms);
+const generateComment = () => ({
+  author: generateAuthor(),
+  text: chance.sentence(),
+});
+
+const withExistingComment = (cb) =>
+  api.fetchComments().then(comments => {
+    if (comments.length) {
+      const comment = comments[randomInt(comments.length)];
+      cb(comment);
+      return comment;
+    }
+  });
+
+export const createRandomComment = (parentId = null) => {
+  const comment = generateComment();
+  return api.createComment(comment.author, comment.text, parentId);
 }
+
+export const createRandomReply = () =>
+  withExistingComment(comment =>
+    createRandomComment(comment.id)
+  );
+
+export const deleteRandomComment = () =>
+  withExistingComment(comment =>
+    api.deleteComment(comment.id)
+  );

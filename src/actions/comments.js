@@ -9,6 +9,13 @@ import {
   SET_SENDING_COMMENT,
   SET_POLLING_COMMENTS,
 } from '../constants';
+
+import {
+  getComment,
+  getCommentsSync,
+  isPollingComments,
+} from '../reducers';
+
 import * as api from '../api';
 
 export const fetchComments = () => (dispatch) => {
@@ -18,12 +25,28 @@ export const fetchComments = () => (dispatch) => {
   });
 }
 
+// FIXME reducers require full comment tree when removing a comment
+
 export const pollComments = () => (dispatch, getState) => {
-  const { commentsSync, pollingComments } = getState();
+  const state = getState();
+  const commentsSync = getCommentsSync(state);
+  const pollingComments = isPollingComments(state);
   if (!pollingComments) {
     dispatch(setPollingComments(true));
-    api.pollComments(commentsSync).then(comments => {
-      comments.forEach(comment => dispatch(addComment(comment)));
+    api.pollComments(commentsSync).then(events => {
+      events.forEach(event => {
+        switch (event.type) {
+          case 'new':
+            return dispatch(addComment(event.comment));
+          case 'deleted':
+            let comment = getComment(getState(), event.comment.id);
+            // FIXME ideally this shouldn't be needed but it is
+            if (comment) {
+              dispatch(removeComment(comment));
+            }
+            return;
+        }
+      });
       dispatch(setCommentsSync(Date.now()));
       dispatch(setPollingComments(false));
     });
