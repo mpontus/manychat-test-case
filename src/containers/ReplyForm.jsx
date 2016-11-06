@@ -9,7 +9,7 @@ import { connectToConfiguration } from '../utils/configuration';
 class ReplyForm extends Component {
 
   static propTypes = {
-    currentUser: React.PropTypes.boolean,
+    currentUser: React.PropTypes.any,
     maxTextLength: React.PropTypes.number,
     parent: React.PropTypes.object,
     replyingTo: React.PropTypes.any,
