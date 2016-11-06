@@ -9,7 +9,7 @@ import { connectToConfiguration } from '../utils/configuration';
 class ReplyForm extends Component {
 
   static propTypes = {
-    loggedIn: React.PropTypes.boolean,
+    currentUser: React.PropTypes.boolean,
     maxTextLength: React.PropTypes.number,
     parent: React.PropTypes.object,
     replyingTo: React.PropTypes.any,
@@ -24,13 +24,13 @@ class ReplyForm extends Component {
   render() {
     const {
       parent,
-      loggedIn,
+      currentUser,
       replyingTo,
       sendingComment,
       maxTextLength,
     } = this.props;
 
-    if (!loggedIn) {
+    if (!currentUser) {
       return null;
     }
 
@@ -44,6 +44,9 @@ class ReplyForm extends Component {
           <SessionDetails />
         </aside>
         <main>
+          <div className="author-name">
+            Posting as {currentUser.username}
+          </div>
           <CommentForm
             disabled={sendingComment}
             maxTextLength={maxTextLength}
@@ -59,7 +62,7 @@ class ReplyForm extends Component {
 
 export default connect(
   (state) => ({
-    loggedIn: state.currentUser,
+    currentUser: state.currentUser,
     replyingTo: state.replyingTo,
     sendingComment: isSendingComment(state),
   }),
