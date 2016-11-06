@@ -30,7 +30,7 @@ class LoginForm extends Component {
           onChange={(e) => this.handleChange(e.target.value)}
         />
         <button onClick={() => this.handleSubmit()}>
-          Login
+          Sign In
         </button>
       </div>
     );
