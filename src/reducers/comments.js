@@ -8,7 +8,7 @@ import {
   SET_SENDING_COMMENT,
   SET_POLLING_COMMENTS,
 } from '../constants';
-import { removeComment } from '../actions';
+import { addComment, removeComment } from '../actions';
 
 const commentsById = (state = {}, action) => {
   switch (action.type) {
@@ -175,6 +175,34 @@ const createStatusReducer = (actionType, defaultState) =>
     return state;
   }
 
+const commentAncestors = (state = {}, action) => {
+  switch (action.type) {
+    case SET_COMMENTS:
+      return action.comments.reduce((state, comment) => {
+        return commentAncestors(state, addComment(comment));
+      }, state);
+    case ADD_COMMENT:
+      if (action.comment.parentId === null) {
+        return state;
+      }
+      const parentAncestors = state[action.comment.parentId] || [];
+      return {
+        ...state,
+        [action.comment.id]: [action.comment.parentId, ...parentAncestors],
+      }
+    case REMOVE_COMMENT:
+      let newState = action.comment.replies.reduce((state, comment) => {
+        return commentAncestors(state, removeComment(comment))
+      }, state);
+      delete newState[action.comment.id];
+      return newState;
+    default:
+      return state;
+  }
+}
+
+
+
 export default ensureUniqueComments(combineReducers({
   commentsSync,
   sendingComment: createStatusReducer(SET_SENDING_COMMENT, false),
@@ -183,6 +211,7 @@ export default ensureUniqueComments(combineReducers({
   rootCommentIds,
   commentParentIds,
   commentChildrenIds,
+  commentAncestors,
 }));
 
 const getCommentChildren = (state, id) =>
@@ -195,8 +224,9 @@ export const getComment = (state, id) => {
   }
   return {
     ...comment,
-    parentId: state.commentParentIds[id],
-    replies: getCommentChildren(state, id),
+    parentId: state.commentParentIds[id] || null,
+    ancestors: state.commentAncestors[id] || [],
+    replies: getCommentChildren(state, id) || [],
   };
 }
 
