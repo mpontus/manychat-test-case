@@ -15,14 +15,23 @@ const getRandomComment = () =>
     comments[randomInt(comments.length)]
   );
 
-export const createFakeComment = () =>
-  getRandomComment().then(parent => {
+export const createFakeComment = () => {
+  if (randomInt(2)) {
+    return getRandomComment().then(parent => {
+      const username = chance.name();
+      return api.createComment({
+        username: username,
+        avatarUrl: generateAvatarUrl(username),
+      }, chance.sentence(), parent.id);
+    });
+  } else {
     const username = chance.name();
     return api.createComment({
       username: username,
       avatarUrl: generateAvatarUrl(username),
-    }, chance.sentence(), parent.id);
-  });
+    }, chance.sentence());
+  }
+}
 
 export const fakeCommentLoop = (ms) => {
   setTimeout(() => createFakeComment().then(() => fakeCommentLoop(ms)), ms);
