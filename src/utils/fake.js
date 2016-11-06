@@ -23,7 +23,7 @@ const generateComment = () => ({
 const withExistingComment = (n, cb) =>
   api.fetchComments().then(comments => {
     if (comments.length) {
-      const comment = comments[randomInt(Math.max(n, comments.length))];
+      const comment = comments[randomInt(Math.min(n, comments.length))];
       cb(comment);
       return comment;
     }
