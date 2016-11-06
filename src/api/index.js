@@ -79,8 +79,7 @@ export const createComment = (author, text, parentId = null) => {
   });
 }
 
-// TODO check author matching
-export const deleteComment = (author, commentId) => {
+export const deleteComment = (commentId) => {
   return delay(500).then(() => {
     const deletedComment = db.comments.find(c => c.id === commentId);
     db.comments = db.comments.filter(c => c.id !== commentId);
