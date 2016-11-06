@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { setReplyingTo, deleteComment } from '../actions';
+import { connectToConfiguration } from '../utils/configuration';
 
 class CommentActions extends Component {
   static propTypes = {
@@ -18,7 +19,8 @@ class CommentActions extends Component {
   }
 
   canReplyToComment(comment) {
-    return this.props.currentUser !== null;
+    return this.props.currentUser !== null &&
+           this.props.maxThreadDepth > comment.ancestors.length;
   }
 
   render() {
@@ -48,4 +50,6 @@ class CommentActions extends Component {
 export default connect(
   ({ currentUser, replyingTo }) => ({ currentUser, replyingTo }),
   { setReplyingTo, deleteComment },
-)(CommentActions);
+)(connectToConfiguration(settings => ({
+  maxThreadDepth: settings.maxThreadDepth,
+}))(CommentActions));
