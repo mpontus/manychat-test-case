@@ -3,10 +3,12 @@ import { connect } from 'react-redux';
 import CommentForm from '../components/CommentForm';
 import { createComment, setReplyingTo } from '../actions';
 import { isSendingComment } from '../reducers';
+import { connectToConfiguration } from '../utils/configuration';
 
 class ReplyForm extends Component {
 
   static propTypes = {
+    maxTextLength: React.PropTypes.number,
     parent: React.PropTypes.object,
     replyingTo: React.PropTypes.any,
     sendingComment: React.PropTypes.bool,
@@ -18,7 +20,12 @@ class ReplyForm extends Component {
   }
 
   render() {
-    const { parent, replyingTo, sendingComment } = this.props;
+    const {
+      parent,
+      replyingTo,
+      sendingComment,
+      maxTextLength,
+    } = this.props;
 
     if (replyingTo !== (parent ? parent.id : null)) {
       return null;
@@ -27,11 +34,14 @@ class ReplyForm extends Component {
     return (
       <CommentForm
         disabled={sendingComment}
+        maxTextLength={maxTextLength}
         onSubmit={(comment) => this.handleSubmit(comment)}
       />
     );
   }
 };
+
+
 
 export default connect(
   (state) => ({
@@ -39,4 +49,6 @@ export default connect(
     sendingComment: isSendingComment(state),
   }),
   { createComment },
-)(ReplyForm);
+)(connectToConfiguration(settings => ({
+  maxTextLength: settings.maxCommentLength,
+}))(ReplyForm));
