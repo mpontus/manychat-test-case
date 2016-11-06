@@ -49,9 +49,10 @@ const pollingLoop = (interval) => {
 
 pollingLoop(POLLING_INTERVAL);
 
-setInterval(fake.createRandomComment, 4000);
-setInterval(fake.createRandomReply, 6000);
-setInterval(fake.deleteRandomComment, 8000);
+setTimeout(fake.createRandomComment, 1000);
+setInterval(fake.createRandomReply, 2000);
+setInterval(fake.deleteRandomComment, 4000);
+setInterval(fake.createRandomComment, 6000);
 
 const settings = {
   maxCommentLength: 280,

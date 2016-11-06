@@ -19,10 +19,11 @@ const generateComment = () => ({
   text: chance.sentence(),
 });
 
-const withExistingComment = (cb) =>
+// select random comment from the latest N
+const withExistingComment = (n, cb) =>
   api.fetchComments().then(comments => {
     if (comments.length) {
-      const comment = comments[randomInt(comments.length)];
+      const comment = comments[randomInt(Math.max(n, comments.length))];
       cb(comment);
       return comment;
     }
@@ -34,11 +35,11 @@ export const createRandomComment = (parentId = null) => {
 }
 
 export const createRandomReply = () =>
-  withExistingComment(comment =>
+  withExistingComment(8, comment =>
     createRandomComment(comment.id)
   );
 
 export const deleteRandomComment = () =>
-  withExistingComment(comment =>
+  withExistingComment(8, comment =>
     api.deleteComment(comment.id)
   );
