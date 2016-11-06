@@ -22,14 +22,17 @@ class LoginForm extends Component {
   }
 
   render() {
+    const { username } = this.state;
     return (
       <div className="login-form">
         <input
-          value={this.state.username}
+          value={username}
           placeholder="Username"
           onChange={(e) => this.handleChange(e.target.value)}
         />
-        <button onClick={() => this.handleSubmit()}>
+        <button
+          disabled={username === ""}
+          onClick={() => this.handleSubmit()}>
           Sign In
         </button>
       </div>
