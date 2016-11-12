@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
-import { IntlProvider } from 'react-intl';
 import reducer, {
   getCommentsSync,
   isPollingComments,
@@ -56,12 +55,10 @@ const settings = {
 };
 
 ReactDOM.render(
-  <IntlProvider locale="en">
-    <Provider store={store}>
-      <ConfigurationProvider settings={settings}>
-        <App />
-      </ConfigurationProvider>
-    </Provider>
-  </IntlProvider>,
+  <Provider store={store}>
+    <ConfigurationProvider settings={settings}>
+      <App />
+    </ConfigurationProvider>
+  </Provider>,
   document.getElementById('app')
 );
